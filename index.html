@@ -6,6 +6,7 @@
   <meta name="description" content="Find workforce programs, job-search help, training and education in Everett, Massachusetts.">
   <meta name="theme-color" content="#eaf4fb">
   <title>Everett Workforce Guide</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -80,6 +81,10 @@
       <div class="directory-toolbar">
         <p id="resultSummary" aria-live="polite">Showing all programs</p>
         <div class="toolbar-actions">
+          <div class="view-toggle" aria-label="Choose directory view">
+            <button id="listViewButton" type="button" aria-pressed="true">List</button>
+            <button id="mapViewButton" type="button" aria-pressed="false">Map</button>
+          </div>
           <label class="toggle"><input id="bilingualOnly" type="checkbox"><span></span> Bilingual support</label>
           <button class="filter-reset" id="resetFilters" type="button">Reset filters</button>
         </div>
@@ -87,6 +92,10 @@
 
       <!-- JS renders resource cards here from data.js, keeping content separate from layout. -->
       <div class="resource-grid" id="resourceGrid"></div>
+      <section class="map-view" id="mapView" aria-label="Map of workforce programs" hidden>
+        <div id="resourceMap" role="application" aria-label="Interactive map of filtered workforce programs"></div>
+        <p id="mapInfo" aria-live="polite"></p>
+      </section>
       <div class="empty-state" id="emptyState" hidden>
         <span aria-hidden="true">⌕</span><h3>No exact matches</h3><p>Try a broader search or reset the filters.</p><button type="button" id="emptyReset">Show all programs</button>
       </div>
@@ -124,6 +133,7 @@
     </article>
   </template>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="data.js"></script>
   <script src="app.js"></script>
 </body>
