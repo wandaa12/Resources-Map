@@ -15,14 +15,22 @@
   const savedCount = document.querySelector("#savedCount");
   const dialog = document.querySelector("#resourceDialog");
   const dialogContent = document.querySelector("#dialogContent");
+  const mapView = document.querySelector("#mapView");
+  const mapInfo = document.querySelector("#mapInfo");
+  const listViewButton = document.querySelector("#listViewButton");
+  const mapViewButton = document.querySelector("#mapViewButton");
 
   const state = {
     query: "",
     category: "All",
     bilingual: false,
     savedOnly: false,
+    view: "list",
     saved: new Set(JSON.parse(localStorage.getItem("everett-resource-saves") || "[]"))
   };
+
+  let resourceMap;
+  let markerLayer;
 
   // Normalize text once per comparison so a visitor can search across every field.
   const searchableText = resource => Object.values(resource)
@@ -143,12 +151,80 @@
     return `<section class="detail-block"><h3>${title}</h3><p>${iconText(value, "Contact the provider for details.")}</p></section>`;
   }
 
+  function initializeMap() {
+    if (resourceMap || typeof L === "undefined") return;
+    resourceMap = L.map("resourceMap", { scrollWheelZoom: false }).setView([42.406, -71.052], 13);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(resourceMap);
+    markerLayer = L.layerGroup().addTo(resourceMap);
+  }
+
+  function renderMap(resources) {
+    initializeMap();
+    if (!resourceMap) {
+      mapInfo.textContent = "The interactive map could not load. Use list view to browse programs.";
+      return;
+    }
+
+    markerLayer.clearLayers();
+    const mapped = resources.filter(resource => resource.coordinates);
+    const bounds = [];
+
+    mapped.forEach((resource, index) => {
+      const markerContent = document.createElement("div");
+      markerContent.className = "map-popup";
+      const name = document.createElement("strong");
+      name.textContent = resource.name;
+      const address = document.createElement("span");
+      address.textContent = resource.address;
+      const details = document.createElement("button");
+      details.type = "button";
+      details.textContent = "View details";
+      details.addEventListener("click", () => openDetails(resource));
+      markerContent.append(name, address, details);
+
+      const icon = L.divIcon({
+        className: "",
+        html: `<div class="workforce-marker"><span>${index + 1}</span></div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34],
+        popupAnchor: [0, -30]
+      });
+      L.marker(resource.coordinates, { icon, title: resource.name })
+        .bindPopup(markerContent)
+        .addTo(markerLayer);
+      bounds.push(resource.coordinates);
+    });
+
+    if (bounds.length > 1) resourceMap.fitBounds(bounds, { padding: [42, 42], maxZoom: 14 });
+    else if (bounds.length === 1) resourceMap.setView(bounds[0], 14);
+    else resourceMap.setView([42.406, -71.052], 13);
+
+    const withoutLocation = resources.length - mapped.length;
+    mapInfo.textContent = `${mapped.length} mapped location${mapped.length === 1 ? "" : "s"}.${withoutLocation ? ` ${withoutLocation} online or citywide program${withoutLocation === 1 ? " is" : "s are"} available in list view.` : ""}`;
+    window.setTimeout(() => resourceMap.invalidateSize(), 0);
+  }
+
+  function setView(view) {
+    state.view = view;
+    listViewButton.setAttribute("aria-pressed", String(view === "list"));
+    mapViewButton.setAttribute("aria-pressed", String(view === "map"));
+    grid.hidden = view !== "list";
+    mapView.hidden = view !== "map";
+    render();
+  }
+
   function render() {
     const resources = visibleResources();
     grid.replaceChildren(...resources.map(createCard));
     renderCategoryFilters();
     savedCount.textContent = state.saved.size;
     emptyState.hidden = resources.length !== 0;
+    grid.hidden = state.view !== "list";
+    mapView.hidden = state.view !== "map";
+    if (state.view === "map") renderMap(resources);
 
     const mode = state.savedOnly ? "saved " : "";
     resultSummary.textContent = `Showing ${resources.length} ${mode}program${resources.length === 1 ? "" : "s"}`;
@@ -207,6 +283,9 @@
     render();
     document.querySelector("#directory").scrollIntoView({ behavior: "smooth" });
   });
+
+  listViewButton.addEventListener("click", () => setView("list"));
+  mapViewButton.addEventListener("click", () => setView("map"));
 
   document.querySelector("#resetFilters").addEventListener("click", resetFilters);
   document.querySelector("#emptyReset").addEventListener("click", resetFilters);
