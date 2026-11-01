@@ -427,13 +427,117 @@ const WORKFORCE_COORDINATES = {
   "luma": [42.4107176, -71.0458341]
 };
 
+/*
+  Filter metadata is explicit instead of inferred from description text. This
+  keeps the audience, cost, class-type and delivery filters predictable.
+*/
+const PROGRAM_FILTERS = {
+  "masshire-metro-north": { audiences: ["adult"], free: true, englishLearning: false, formats: ["inPerson", "online"] },
+  "bhcc-workforce": { audiences: ["adult"], free: false, englishLearning: true, formats: ["inPerson"] },
+  "youthworks-everett": { audiences: ["youth"], free: true, englishLearning: false, formats: ["inPerson"] },
+  "la-colaborativa": { audiences: ["adult"], free: true, englishLearning: false, formats: ["inPerson"] },
+  "catholic-charities-adult-ed": { audiences: ["adult"], free: true, englishLearning: true, formats: ["inPerson", "online"] },
+  "la-comunidad": { audiences: ["adult"], free: true, englishLearning: true, formats: ["inPerson"] },
+  "neighborhood-developers": { audiences: ["adult"], free: true, englishLearning: false, formats: ["inPerson", "online"] },
+  "everett-library": { audiences: ["youth", "adult"], free: true, englishLearning: true, formats: ["inPerson"] },
+  "everett-human-resources": { audiences: ["adult"], free: true, englishLearning: false, formats: ["inPerson", "online"] },
+  "everett-community-growers": { audiences: ["youth"], free: true, englishLearning: false, formats: ["inPerson"] },
+  "everett-adult-learning": { audiences: ["adult"], free: true, englishLearning: true, formats: ["inPerson", "online"] },
+  "luma": { audiences: ["adult"], free: true, englishLearning: false, formats: ["inPerson"] },
+  "findhelp": { audiences: ["youth", "adult"], free: true, englishLearning: false, formats: ["online"] }
+};
+
+/*
+  Human-reviewed Spanish copy lives beside the program data. Organization
+  names, street addresses, phone numbers and URLs intentionally remain as-is.
+*/
+const SPANISH_TRANSLATIONS = {
+  "masshire-metro-north": {
+    summary: "Orientación profesional, apoyo para buscar empleo, becas de capacitación, talleres y conexiones con empleadores para quienes buscan trabajo en Massachusetts.",
+    services: "Orientación profesional de WIOA, talleres de currículum y entrevistas, ayuda para conseguir empleo, ferias de contratación y posibles vales de capacitación.",
+    eligibility: "Abierto a personas de Massachusetts de 18 años o más que buscan empleo. Los fondos de capacitación pueden dar prioridad a adultos de bajos ingresos, veteranos y trabajadores desplazados. Algunos empleos pueden exigir autorización de trabajo.",
+    population: "Adultos desempleados o subempleados, personas que cambian de carrera, veteranos y trabajadores que enfrentan barreras laborales.",
+    hours: "Lunes a viernes, de 8:30 a. m. a 5:00 p. m.", accessibility: "Accesible para sillas de ruedas; puede haber apoyo remoto y telefónico.",
+    languages: "Pregunte por apoyo en español, portugués, criollo haitiano y servicios de interpretación.", referrals: "Puede conectar a los usuarios con programas de credenciales, YouthWorks y socios especializados en empleo.", contact: "Coordinador de admisión de servicio al cliente", tags: ["Orientación laboral", "Capacitación", "18+"]
+  },
+  "bhcc-workforce": {
+    summary: "Credenciales de corta duración, educación para adultos, clases de inglés y capacitación laboral en el campus de Chelsea.",
+    services: "Certificados profesionales, ESOL, preparación para HiSET/GED, capacitación técnica y apoyo para emprendedores.",
+    eligibility: "Los programas generalmente atienden a adultos de 18 años o más. Los requisitos y costos varían según el curso; algunas opciones financiadas por subvenciones pueden ser gratuitas.",
+    population: "Estudiantes adultos, residentes inmigrantes y multilingües, emprendedores y trabajadores que buscan nuevas credenciales.",
+    hours: "Clases entre semana, por la noche y algunos sábados; confirme según el programa.", accessibility: "Campus accesible según ADA; se puede llegar desde Everett por las rutas 111 y 112 de MBTA.",
+    languages: "Puede haber orientación multilingüe; pregunte por apoyo en español y portugués.", referrals: "Conecta a los estudiantes con carreras universitarias, aprendizajes y empleadores regionales.", contact: "Oficina de Desarrollo Laboral y Económico", tags: ["ESOL", "Certificados", "GED"]
+  },
+  "youthworks-everett": {
+    summary: "Oportunidades de trabajo remunerado durante el verano y todo el año, con capacitación laboral para jóvenes de Everett.", services: "Empleo subsidiado, preparación para el trabajo, apoyo con currículum, educación financiera y exploración de carreras.",
+    eligibility: "Generalmente para residentes de Everett de 14 a 21 años. Las prioridades y fechas de solicitud varían según el ciclo de financiación.", population: "Estudiantes de secundaria, jóvenes fuera de la escuela y adultos jóvenes que buscan su primera experiencia laboral.",
+    hours: "Programa estacional; los horarios del año escolar y del verano varían.", accessibility: "Los programas se realizan en escuelas, espacios comunitarios y empleadores participantes.", languages: "Pregunte por apoyo en español, portugués y criollo haitiano.", referrals: "Conecta a los participantes con empleadores y rutas de formación postsecundaria.", contact: "Equipo de Servicios Juveniles", tags: ["Edades 14–21", "Trabajo remunerado", "Verano"]
+  },
+  "la-colaborativa": {
+    summary: "Defensa bilingüe de trabajadores, capacitación, organización comunitaria y apoyo de emergencia para familias inmigrantes.", services: "Apoyo sobre derechos laborales, defensa contra el robo de salarios, capacitación de seguridad, rutas de empleo, organización y ayuda de emergencia.",
+    eligibility: "Los servicios comunitarios están diseñados con pocas barreras. Comuníquese con la organización para conocer los requisitos actuales.", population: "Trabajadores inmigrantes, trabajadores de bajos salarios y familias de habla hispana y portuguesa de Chelsea y comunidades cercanas.",
+    hours: "Lunes a viernes, aproximadamente de 9:00 a. m. a 5:00 p. m.; confirme el horario sin cita.", accessibility: "Ubicada en Broadway cerca del autobús de MBTA; llame para consultar adaptaciones de movilidad.", languages: "Inglés, español y portugués.", referrals: "Conecta a residentes con asistencia legal, vivienda, distribución de alimentos y organizaciones asociadas.", contact: "Equipo del Centro de Trabajadores", tags: ["Apoyo inmigrante", "Derechos laborales", "Gratis"]
+  },
+  "catholic-charities-adult-ed": {
+    summary: "Inglés orientado a industrias, alfabetización digital y preparación laboral para adultos inmigrantes y refugiados.", services: "ESOL, habilidades digitales, orientación para buscar empleo, preparación para entrevistas y apoyo de manejo de casos.",
+    eligibility: "Los programas para adultos generalmente atienden a inmigrantes y refugiados de 18 años o más. Puede requerirse una evaluación de nivel e inscripción.", population: "Adultos inmigrantes, refugiados, estudiantes de inglés y personas de bajos ingresos que buscan empleo.",
+    hours: "Clases por la mañana y por la noche; el horario varía por período.", accessibility: "Puede haber opciones virtuales; llame para consultar accesibilidad y transporte.", languages: "Pregunte por apoyo en español, portugués, criollo haitiano y vietnamita.", referrals: "Puede conectar a estudiantes con beneficios y servicios de salud, legales y de empleo.", contact: "Equipo de admisión de Educación para Adultos", tags: ["Inglés", "Habilidades digitales", "Adultos"]
+  },
+  "la-comunidad": {
+    summary: "Organización local para inmigrantes que ofrece inglés, ciudadanía y orientación en Everett.", services: "Clases de ESL y ciudadanía, ayuda migratoria, traducción, interpretación, notarización, ayuda con ITIN y educación comunitaria.",
+    eligibility: "Los requisitos varían según el programa. Comuníquese con la oficina para conocer la inscripción y los documentos requeridos.", population: "Comunidades inmigrantes latinas y latinoamericanas, y otros residentes de Everett que necesitan orientación.",
+    hours: "Lunes a viernes, de 9:00 a. m. a 5:00 p. m.; sábado, de 9:00 a. m. a 3:00 p. m.", accessibility: "Ubicación céntrica en Broadway; llame para consultar adaptaciones específicas de movilidad.", languages: "Inglés, español y portugués.", referrals: "Brinda orientación directa y conexiones con agencias asociadas.", contact: "Personal de admisión comunitaria", tags: ["Ciudadanía", "ESL", "Inmigración"]
+  },
+  "neighborhood-developers": {
+    summary: "Orientación financiera, laboral, de vivienda y beneficios para residentes elegibles de Chelsea, Revere y Everett.", services: "Ayuda de vivienda, búsqueda de empleo, capacitación, orientación financiera, alimentos, preparación de impuestos y navegación de beneficios.",
+    eligibility: "La disponibilidad depende del programa y el área de servicio. Comuníquese con CONNECT para una evaluación inicial.", population: "Residentes de ingresos bajos y moderados, hogares inmigrantes y familias de Chelsea, Revere y Everett.",
+    hours: "Los horarios de citas y programas varían.", accessibility: "Hay admisión multilingüe; pregunte por citas virtuales y acceso físico.", languages: "Inglés y español; se puede coordinar apoyo en otros idiomas.", referrals: "Coordina varios servicios de socios mediante un proceso de admisión compartido.", contact: "Equipo de admisión de CONNECT", tags: ["Vivienda", "Beneficios", "Orientación financiera"]
+  },
+  "everett-library": {
+    summary: "Aprendizaje gratuito en la biblioteca, programas de inglés, acceso digital y orientación a recursos comunitarios.", services: "Programas de ESL, bases de datos, acceso a computadoras, recursos profesionales, talleres y referencias a organizaciones locales.",
+    eligibility: "Gratis y abierto al público; puede necesitar una tarjeta de biblioteca para algunas bases de datos o préstamos.", population: "Residentes de Everett, personas que buscan empleo, estudiantes, estudiantes de inglés y familias.",
+    hours: "El horario de la biblioteca varía según el día; confirme antes de visitar.", accessibility: "Edificio público en el centro de Everett; consulte al personal sobre adaptaciones.", languages: "Programas de ESL y conexiones multilingües con recursos comunitarios.", referrals: "Conecta a visitantes con organizaciones de inmigración, educación y servicios sociales.", contact: "Mostrador de referencia de la biblioteca", tags: ["Internet gratis", "ESL", "Búsqueda de empleo"]
+  },
+  "everett-human-resources": {
+    summary: "Fuente oficial de oportunidades de empleo municipal y servicio civil de la Ciudad de Everett.", services: "Ofertas de empleo de la Ciudad, información de contratación, incorporación y servicios para empleados municipales.",
+    eligibility: "Cada empleo publicado tiene sus propios requisitos de educación, experiencia y autorización de trabajo.", population: "Personas interesadas en empleo municipal en Everett.",
+    hours: "Lun. y jue. de 8:00 a. m. a 7:30 p. m.; mar. y mié. de 8:00 a. m. a 5:00 p. m.", accessibility: "Ayuntamiento de Everett; comuníquese con el departamento para solicitar adaptaciones.", languages: "Comuníquese con la Ciudad para recibir asistencia lingüística.", referrals: "Dirige a los solicitantes a las vacantes activas y los departamentos correspondientes.", contact: "Departamento de Recursos Humanos", tags: ["Empleos municipales", "Solicitudes", "Contratación"]
+  },
+  "everett-community-growers": {
+    summary: "Pasantías comunitarias, desarrollo de liderazgo y aprendizaje práctico relacionado con la justicia alimentaria y ambiental.", services: "Pasantías remuneradas, programas de liderazgo, proyectos comunitarios y experiencia de preparación laboral.",
+    eligibility: "Varía según el programa estacional, la financiación y el espacio disponible. Puede ser necesario presentar una solicitud.", population: "Jóvenes y adultos jóvenes de Everett, familias inmigrantes y estudiantes universitarios de primera generación.",
+    hours: "Estacional y específico de cada programa.", accessibility: "Espacios comunitarios en Everett; pregunte por transporte y adaptaciones.", languages: "Diseñado para la comunidad multilingüe de Everett; la disponibilidad varía por programa.", referrals: "Acepta solicitudes directas y referencias de escuelas y organizaciones juveniles.", contact: "Personal del programa", tags: ["Pasantías", "Liderazgo", "Jóvenes"]
+  },
+  "everett-adult-learning": {
+    summary: "Inglés, equivalencia de escuela secundaria y habilidades digitales básicas para estudiantes adultos de Everett.", services: "ESL para adultos, preparación para GED/HiSET, lectura, escritura, matemáticas, computación y preparación laboral.",
+    eligibility: "Generalmente para mayores de 18 años. Puede requerirse inscripción, prueba de nivel y disponibilidad de cupo.", population: "Adultos que aprenden inglés, trabajadores que buscan avanzar y adultos sin diploma de escuela secundaria.",
+    hours: "Los horarios de clases e inscripción varían; llame al programa.", accessibility: "Ubicación céntrica en Broadway; las opciones presenciales y remotas limitadas pueden variar por período.", languages: "Puede haber apoyo de inscripción en español.", referrals: "Acepta solicitudes directas y referencias de escuelas, MassHire y organizaciones comunitarias.", contact: "Coordinador del programa de Educación para Adultos", tags: ["ESL", "GED", "Computación"]
+  },
+  "luma": {
+    summary: "Educación, defensa y orientación de recursos creadas con y para comunidades inmigrantes latinas.", services: "Asistencia relacionada con inmigración, educación sobre derechos laborales, participación cívica, organización y orientación de recursos.",
+    eligibility: "Pueden aplicarse requisitos específicos del programa; comuníquese con LUMA para información actual de admisión.", population: "Personas, familias y trabajadores latinos e inmigrantes, y residentes con dominio limitado del inglés.",
+    hours: "Lunes a viernes, aproximadamente de 9:00 a. m. a 5:00 p. m.; confirme primero.", accessibility: "Oficina vecinal en Everett; consulte al personal sobre adaptaciones.", languages: "Inglés y español.", referrals: "Trabaja con organizaciones comunitarias, escuelas y programas de servicios sociales.", contact: "Personal de LUMA", tags: ["Español", "Defensa", "Orientación"]
+  },
+  "findhelp": {
+    address: "Servicio en línea",
+    summary: "Directorio para buscar programas gratuitos o de costo reducido de empleo, capacitación y educación por código postal.", services: "Búsqueda por código postal de ayuda laboral, capacitación, educación, transporte y otros apoyos que pueden reducir barreras al trabajo.",
+    eligibility: "Cada proveedor establece sus propias reglas. Findhelp es gratuito y no determina la elegibilidad.", population: "Cualquier persona que busque programas laborales o apoyo adicional fuera de esta guía.",
+    hours: "Sitio web disponible las 24 horas, todos los días.", accessibility: "Directorio en línea; la accesibilidad varía según el proveedor.", languages: "Interfaz en español disponible; el acceso lingüístico varía según el proveedor.", referrals: "Conecta directamente con organizaciones comunitarias e información de solicitud.", contact: "Use la búsqueda en línea", tags: ["Empleo", "Código postal", "24/7"]
+  }
+};
+
+const PROGRAM_REVIEW_DATE = "2026-11-01";
+
 const RESOURCES = ALL_RESOURCES
   .filter(resource => WORKFORCE_CATEGORIES[resource.id])
   .map(resource => ({
     ...resource,
     category: WORKFORCE_CATEGORIES[resource.id][0],
     categories: WORKFORCE_CATEGORIES[resource.id],
-    coordinates: WORKFORCE_COORDINATES[resource.id] || null
+    coordinates: WORKFORCE_COORDINATES[resource.id] || null,
+    ...PROGRAM_FILTERS[resource.id],
+    verified: PROGRAM_REVIEW_DATE,
+    translations: { es: SPANISH_TRANSLATIONS[resource.id] }
   }));
 
 // Category order follows the most common workforce goals.
