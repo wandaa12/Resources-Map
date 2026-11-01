@@ -52,9 +52,10 @@ This six-page document reorganizes the group research into tables. It includes a
 - Online and citywide programs remain in list view because they do not have a single street location.
 - Directions links open the selected address in Google Maps without using a paid Maps API or exposing an API key.
 - Filters cover youth/adult audiences, free programs, English classes and online/in-person formats. Program metadata is explicit in `data.js` rather than inferred from keywords.
+- The program matcher accepts multiple goals, age groups and participation formats. Selections within each section use inclusive matching, so visitors can compare overlapping needs rather than being forced into one answer.
 - Each record displays its review date. This means the directory entry was reviewed; it does not guarantee that a provider has not changed its program since that date.
 - Share links use stable `#program=` URLs, and print styles turn an open program detail into a clean handout.
-- English and Spanish interface text and program descriptions are stored locally. Organization names, phone numbers, addresses and URLs retain their official form.
+- English and Spanish interface text and program descriptions are stored locally. Spanish interface wording was reviewed for natural phrasing rather than literal word-for-word translation. Organization names, phone numbers, addresses and URLs retain their official form.
 
 ## Current online sources
 
