@@ -3,12 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Find trusted community services for Everett, Massachusetts in one clear, searchable guide.">
-  <meta name="theme-color" content="#0756b8">
-  <title>Everett Resource Map</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Find workforce programs, job-search help, training and education in Everett, Massachusetts.">
+  <meta name="theme-color" content="#eaf4fb">
+  <title>Everett Workforce Guide</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,76 +13,72 @@
   <a class="skip-link" href="#directory">Skip to resource directory</a>
 
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="Everett Resource Map home">
+      <a class="brand" href="#top" aria-label="Everett Workforce Guide home">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 40 40"><path d="M20 36s12-10.3 12-21a12 12 0 1 0-24 0c0 10.7 12 21 12 21Z"/><circle cx="20" cy="15" r="4.5"/></svg>
       </span>
-      <span><strong>Everett</strong><small>Resource Map</small></span>
+      <span><strong>Everett</strong><small>Workforce Guide</small></span>
     </a>
     <nav aria-label="Primary navigation">
-      <a href="#directory">Find resources</a>
+      <a href="#directory">Find programs</a>
       <a href="#how-it-works">How it works</a>
-      <button class="saved-nav" id="savedNav" type="button" aria-label="Show saved resources">
+      <button class="saved-nav" id="savedNav" type="button" aria-label="Show saved programs">
         Saved <span id="savedCount">0</span>
       </button>
     </nav>
   </header>
 
   <main id="top">
-    <!-- HERO: a practical entry point instead of a decorative-only introduction. -->
+    <!-- HERO: direct task language and useful workforce paths replace decorative mapping. -->
     <section class="hero" aria-labelledby="heroTitle">
-      <div class="hero-grid" aria-hidden="true"></div>
-      <div class="orb orb-one" aria-hidden="true"></div>
-      <div class="orb orb-two" aria-hidden="true"></div>
       <div class="hero-content reveal">
-        <p class="eyebrow"><span></span> Community support, made easier</p>
-        <h1 id="heroTitle">The right help can be <em>closer than you think.</em></h1>
-        <p class="hero-copy">Search local programs for employment, education, food, housing, healthcare, legal support and more across Everett and nearby communities.</p>
+        <p class="eyebrow"><span></span> Everett workforce directory</p>
+        <h1 id="heroTitle">Find workforce support in Everett.</h1>
+        <p class="hero-copy">Explore job-search help, career training, English and GED programs, youth employment and worker advocacy in one clear guide.</p>
 
         <form class="hero-search" id="heroSearch" role="search">
           <label class="sr-only" for="searchInput">Search by service, organization, or need</label>
           <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input id="searchInput" type="search" autocomplete="off" placeholder="Try “English classes” or “housing”">
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Try “English classes” or “job training”">
           <button type="submit">Search</button>
         </form>
 
         <div class="quick-links" aria-label="Popular searches">
           <span>Popular:</span>
-          <button type="button" data-quick="Employment">Jobs</button>
+          <button type="button" data-quick="Job Search">Job search</button>
+          <button type="button" data-quick="Training">Training</button>
           <button type="button" data-quick="Education">Education</button>
-          <button type="button" data-quick="Health">Health</button>
-          <button type="button" data-quick="Food">Food</button>
+          <button type="button" data-quick="Youth Jobs">Youth jobs</button>
         </div>
       </div>
 
-      <div class="hero-visual reveal" aria-hidden="true">
-        <div class="map-panel">
-          <div class="map-road road-a"></div><div class="map-road road-b"></div><div class="map-road road-c"></div>
-          <span class="map-label label-everett">EVERETT</span><span class="map-label label-chelsea">CHELSEA</span>
-          <span class="map-pin pin-a"><i>18</i></span><span class="map-pin pin-b"><i>+</i></span><span class="map-pin pin-c"><i>✓</i></span>
-          <div class="map-card-mini"><span>Open directory</span><strong>19 community resources</strong></div>
-        </div>
-      </div>
+      <aside class="workforce-paths reveal" aria-label="Common workforce goals">
+        <p>Start with your goal</p>
+        <button type="button" data-quick="Job Search"><span>01</span><strong>Find a job</strong><i>Applications and career coaching</i></button>
+        <button type="button" data-quick="Training"><span>02</span><strong>Build new skills</strong><i>Credentials and workforce training</i></button>
+        <button type="button" data-quick="Education"><span>03</span><strong>Learn English or earn a GED</strong><i>Adult education programs</i></button>
+        <button type="button" data-quick="Worker Support"><span>04</span><strong>Get worker support</strong><i>Rights, advocacy and navigation</i></button>
+      </aside>
     </section>
 
     <!-- TRUST BAR: sets expectations for a directory with changing information. -->
     <section class="trust-bar" aria-label="Guide highlights">
-      <div><strong>19</strong><span>Local and regional resources</span></div>
-      <div><strong>10</strong><span>Service categories</span></div>
+      <div><strong>13</strong><span>Workforce programs</span></div>
+      <div><strong>6</strong><span>Workforce categories</span></div>
       <div><strong>Free</strong><span>No account required</span></div>
       <p><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-5"/></svg> Call ahead: hours and eligibility can change.</p>
     </section>
 
     <section class="directory-section" id="directory" aria-labelledby="directoryTitle">
       <div class="section-heading reveal">
-        <div><p class="eyebrow dark"><span></span> Browse support</p><h2 id="directoryTitle">Find a resource that fits.</h2></div>
-        <p>Use the filters to narrow the guide. Open any card for eligibility, accessibility, languages and referral details.</p>
+        <div><p class="eyebrow dark"><span></span> Browse programs</p><h2 id="directoryTitle">Choose your next step.</h2></div>
+        <p>Filter by your workforce goal. Open any program for eligibility, accessibility, languages and contact details.</p>
       </div>
 
       <div class="category-scroller" id="categoryFilters" aria-label="Filter by category"></div>
 
       <div class="directory-toolbar">
-        <p id="resultSummary" aria-live="polite">Showing all resources</p>
+        <p id="resultSummary" aria-live="polite">Showing all programs</p>
         <div class="toolbar-actions">
           <label class="toggle"><input id="bilingualOnly" type="checkbox"><span></span> Bilingual support</label>
           <button class="filter-reset" id="resetFilters" type="button">Reset filters</button>
@@ -95,14 +88,14 @@
       <!-- JS renders resource cards here from data.js, keeping content separate from layout. -->
       <div class="resource-grid" id="resourceGrid"></div>
       <div class="empty-state" id="emptyState" hidden>
-        <span aria-hidden="true">⌕</span><h3>No exact matches</h3><p>Try a broader search or reset the filters.</p><button type="button" id="emptyReset">Show all resources</button>
+        <span aria-hidden="true">⌕</span><h3>No exact matches</h3><p>Try a broader search or reset the filters.</p><button type="button" id="emptyReset">Show all programs</button>
       </div>
     </section>
 
     <section class="how-section" id="how-it-works" aria-labelledby="howTitle">
-      <div class="how-intro reveal"><p class="eyebrow light"><span></span> Use the guide</p><h2 id="howTitle">Three simple steps.</h2><p>This directory helps you compare options. The provider always makes the final eligibility decision.</p></div>
+      <div class="how-intro reveal"><p class="eyebrow light"><span></span> Use the guide</p><h2 id="howTitle">Plan your next move.</h2><p>Compare programs, review requirements and contact the provider before applying.</p></div>
       <ol class="steps">
-        <li class="reveal"><span>01</span><div><h3>Search your need</h3><p>Use everyday words like “job,” “food,” “English” or “rent.”</p></div></li>
+        <li class="reveal"><span>01</span><div><h3>Search your goal</h3><p>Use everyday words like “job,” “training,” “English” or “GED.”</p></div></li>
         <li class="reveal"><span>02</span><div><h3>Review the details</h3><p>Check who the program serves, hours, languages and accessibility.</p></div></li>
         <li class="reveal"><span>03</span><div><h3>Call before visiting</h3><p>Confirm availability and documents you may need before you travel.</p></div></li>
       </ol>
@@ -110,8 +103,8 @@
   </main>
 
   <footer>
-    <div class="footer-brand"><span class="brand-mark small" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36s12-10.3 12-21a12 12 0 1 0-24 0c0 10.7 12 21 12 21Z"/><circle cx="20" cy="15" r="4.5"/></svg></span><p><strong>Everett Resource Map</strong><br>A student-built community resource guide.</p></div>
-    <p class="footer-note">Information was compiled from project documents and provider websites. It is not a substitute for professional medical, legal, or emergency advice. For emergencies, call 911.</p>
+    <div class="footer-brand"><span class="brand-mark small" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36s12-10.3 12-21a12 12 0 1 0-24 0c0 10.7 12 21 12 21Z"/><circle cx="20" cy="15" r="4.5"/></svg></span><p><strong>Everett Workforce Guide</strong><br>A student-built workforce directory.</p></div>
+    <p class="footer-note">Information was compiled from project documents and provider websites. Program hours, eligibility and enrollment can change, so contact the provider before applying or visiting.</p>
     <div class="footer-links"><a href="PROJECT_NOTES.md">Project notes</a><a href="https://github.com/wandaa12/Resources-Map">GitHub</a></div>
   </footer>
 
@@ -123,7 +116,7 @@
 
   <template id="resourceCardTemplate">
     <article class="resource-card reveal">
-      <div class="card-top"><span class="category-badge"></span><button class="save-button" type="button" aria-label="Save resource"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg></button></div>
+      <div class="card-top"><span class="category-badge"></span><button class="save-button" type="button" aria-label="Save program"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg></button></div>
       <h3></h3><p class="card-summary"></p>
       <ul class="card-meta"><li class="meta-location"></li><li class="meta-hours"></li></ul>
       <div class="card-tags"></div>
