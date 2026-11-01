@@ -95,7 +95,7 @@
   function updateSaveButton(button, resource) {
     const isSaved = state.saved.has(resource.id);
     button.classList.toggle("saved", isSaved);
-    button.setAttribute("aria-label", `${isSaved ? "Remove" : "Save"} ${resource.name}`);
+    button.setAttribute("aria-label", `${isSaved ? "Remove" : "Save"} program: ${resource.name}`);
     button.setAttribute("aria-pressed", String(isSaved));
   }
 
@@ -151,7 +151,7 @@
     emptyState.hidden = resources.length !== 0;
 
     const mode = state.savedOnly ? "saved " : "";
-    resultSummary.textContent = `Showing ${resources.length} ${mode}resource${resources.length === 1 ? "" : "s"}`;
+    resultSummary.textContent = `Showing ${resources.length} ${mode}program${resources.length === 1 ? "" : "s"}`;
 
     // Newly rendered cards need a fresh reveal observer.
     observeReveals();
