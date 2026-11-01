@@ -7,7 +7,7 @@
   Important: community information changes frequently. Each record includes a
   source URL and the interface reminds visitors to confirm details directly.
 */
-const RESOURCES = [
+const ALL_RESOURCES = [
   {
     id: "masshire-metro-north",
     name: "MassHire Metro North Career Center",
@@ -373,22 +373,51 @@ const RESOURCES = [
     name: "Findhelp Resource Search",
     category: "Community",
     categories: ["Community", "Food", "Housing", "Health"],
-    summary: "A searchable directory for free and reduced-cost services by ZIP code, including food, housing, care and employment.",
+    summary: "A searchable directory for free and reduced-cost employment, training and education programs by ZIP code.",
     address: "Online service",
     phone: "",
     email: "",
     website: "https://www.findhelp.org/",
-    services: "ZIP-code search for food, housing, healthcare, transportation, employment, legal and financial-assistance programs.",
+    services: "ZIP-code search for employment assistance, skills training, education, transportation and other supports that can reduce barriers to work.",
     eligibility: "Each listed provider sets its own rules. Findhelp itself is free to search and does not determine eligibility.",
-    population: "Anyone looking for nearby social services or additional options beyond this guide.",
+    population: "Anyone looking for additional workforce programs or support beyond this guide.",
     hours: "Website available 24/7",
     accessibility: "Online directory; individual provider accessibility varies.",
     languages: "Spanish-language interface available; provider language access varies.",
     referrals: "Links visitors directly to listed community organizations and application information.",
     contact: "Use the online search",
-    tags: ["Online", "ZIP search", "24/7"], bilingual: true
+    tags: ["Employment", "ZIP search", "24/7"], bilingual: true
   }
 ];
 
-// Category order is curated for common visitor needs rather than alphabetically.
-const CATEGORIES = ["All", "Employment", "Education", "Health", "Housing", "Food", "Legal & Advocacy", "Youth", "Community", "Government", "Faith-based"];
+/*
+  Phase-one scope: workforce only.
+  The broader research records remain above so later phases can restore health,
+  housing, food and other services without repeating the research work.
+*/
+const WORKFORCE_CATEGORIES = {
+  "masshire-metro-north": ["Job Search", "Training"],
+  "bhcc-workforce": ["Training", "Education"],
+  "youthworks-everett": ["Youth Jobs", "Training"],
+  "la-colaborativa": ["Worker Support", "Training"],
+  "catholic-charities-adult-ed": ["Education", "Training"],
+  "la-comunidad": ["Education", "Worker Support"],
+  "neighborhood-developers": ["Job Search", "Training"],
+  "everett-library": ["Job Search", "Education"],
+  "everett-human-resources": ["City Jobs", "Job Search"],
+  "everett-community-growers": ["Youth Jobs", "Training"],
+  "everett-adult-learning": ["Education", "Training"],
+  "luma": ["Worker Support"],
+  "findhelp": ["Job Search"]
+};
+
+const RESOURCES = ALL_RESOURCES
+  .filter(resource => WORKFORCE_CATEGORIES[resource.id])
+  .map(resource => ({
+    ...resource,
+    category: WORKFORCE_CATEGORIES[resource.id][0],
+    categories: WORKFORCE_CATEGORIES[resource.id]
+  }));
+
+// Category order follows the most common workforce goals.
+const CATEGORIES = ["All", "Job Search", "Training", "Education", "Youth Jobs", "Worker Support", "City Jobs"];
