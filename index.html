@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Resources Map is getting ready to help you find useful resources near you.">
+  <meta name="theme-color" content="#10261f">
+  <title>Resources Map — Coming Soon</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f0e6;
+      --muted: #b7c5bc;
+      --forest: #10261f;
+      --forest-light: #18372d;
+      --lime: #c8f560;
+      --line: rgba(244, 240, 230, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      background: radial-gradient(circle at 78% 18%, rgba(200, 245, 96, 0.12), transparent 24rem), var(--forest);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.32;
+      background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+    .shell {
+      position: relative;
+      display: flex;
+      min-height: 100vh;
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      flex-direction: column;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: inherit; font-weight: 700; text-decoration: none; }
+    .mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid rgba(200, 245, 96, 0.55);
+      border-radius: 50% 50% 50% 12%;
+      color: var(--forest);
+      background: var(--lime);
+      transform: rotate(-12deg);
+    }
+    .mark span { transform: rotate(12deg); }
+    .status { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 5px rgba(200, 245, 96, 0.1); }
+    main { display: grid; flex: 1; grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr); align-items: center; gap: 72px; padding: 84px 0; }
+    .eyebrow { margin: 0 0 18px; color: var(--lime); font-size: 0.82rem; font-weight: 750; letter-spacing: 0.14em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3.8rem, 8vw, 7.8rem); font-weight: 400; letter-spacing: -0.065em; line-height: 0.88; }
+    h1 em { color: var(--lime); font-weight: inherit; }
+    .intro { max-width: 590px; margin: 32px 0 0; color: var(--muted); font-size: clamp(1rem, 1.5vw, 1.22rem); line-height: 1.7; }
+    .map-card {
+      position: relative;
+      aspect-ratio: 1;
+      width: min(100%, 430px);
+      justify-self: end;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: linear-gradient(32deg, transparent 47%, rgba(244,240,230,0.12) 48%, transparent 49%), linear-gradient(122deg, transparent 47%, rgba(244,240,230,0.12) 48%, transparent 49%), radial-gradient(circle at center, var(--forest-light), #0b1d18 72%);
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.24), 0 48px 100px rgba(0,0,0,0.28);
+    }
+    .route { position: absolute; inset: 17%; border: 2px dashed rgba(200, 245, 96, 0.32); border-radius: 48% 52% 43% 57%; transform: rotate(22deg); }
+    .pin { position: absolute; display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50% 50% 50% 12%; color: var(--forest); background: var(--lime); box-shadow: 0 18px 38px rgba(0,0,0,0.34); transform: translate(-50%, -50%) rotate(-45deg); }
+    .pin::after { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--forest); }
+    .pin.one { top: 38%; left: 38%; }
+    .pin.two { top: 66%; left: 68%; transform: translate(-50%, -50%) rotate(-45deg) scale(0.72); opacity: 0.68; }
+    .label { position: absolute; right: 8%; bottom: 15%; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: rgba(16, 38, 31, 0.82); backdrop-filter: blur(10px); font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.86rem; }
+    footer a { color: var(--ink); text-underline-offset: 4px; }
+    @media (max-width: 780px) {
+      .shell { width: min(100% - 28px, 620px); }
+      header { padding: 20px 0; }
+      .status { font-size: 0.68rem; }
+      main { grid-template-columns: 1fr; gap: 52px; padding: 64px 0; }
+      .map-card { width: min(84vw, 390px); justify-self: center; }
+      footer { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .pin { animation: float 4s ease-in-out infinite; }
+      .pin.two { animation-delay: -1.8s; }
+      @keyframes float { 0%, 100% { margin-top: 0; } 50% { margin-top: -10px; } }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="/" aria-label="Resources Map home"><span class="mark" aria-hidden="true"><span>⌖</span></span><span>Resources Map</span></a>
+      <span class="status">Building the first version</span>
+    </header>
+    <main>
+      <section>
+        <p class="eyebrow">Something useful is taking shape</p>
+        <h1>Find what you need, <em>nearby.</em></h1>
+        <p class="intro">Resources Map is getting ready to make local support and useful resources easier to discover. This is our first stop—the full map is coming soon.</p>
+      </section>
+      <div class="map-card" role="img" aria-label="Abstract map with two location markers">
+        <div class="route" aria-hidden="true"></div><span class="pin one" aria-hidden="true"></span><span class="pin two" aria-hidden="true"></span><span class="label">You are here</span>
+      </div>
+    </main>
+    <footer><span>© <span id="year"></span> Resources Map</span><a href="https://github.com/wandaa12/Resources-Map">View the project on GitHub</a></footer>
+  </div>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
