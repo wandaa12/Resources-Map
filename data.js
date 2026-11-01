@@ -411,12 +411,29 @@ const WORKFORCE_CATEGORIES = {
   "findhelp": ["Job Search"]
 };
 
+// Coordinates are stored locally so the map does not need a geocoding API.
+// Citywide and online programs intentionally remain available in list view only.
+const WORKFORCE_COORDINATES = {
+  "masshire-metro-north": [42.3552444, -71.0569304],
+  "bhcc-workforce": [42.3929788, -71.0405689],
+  "youthworks-everett": [42.4143146, -71.0443469],
+  "la-colaborativa": [42.3913563, -71.0367946],
+  "catholic-charities-adult-ed": [42.3379606, -71.0476675],
+  "la-comunidad": [42.4077445, -71.0547235],
+  "neighborhood-developers": [42.3944915, -71.0307990],
+  "everett-library": [42.4060155, -71.0568179],
+  "everett-human-resources": [42.4083637, -71.0546941],
+  "everett-adult-learning": [42.4106815, -71.0538537],
+  "luma": [42.4107176, -71.0458341]
+};
+
 const RESOURCES = ALL_RESOURCES
   .filter(resource => WORKFORCE_CATEGORIES[resource.id])
   .map(resource => ({
     ...resource,
     category: WORKFORCE_CATEGORIES[resource.id][0],
-    categories: WORKFORCE_CATEGORIES[resource.id]
+    categories: WORKFORCE_CATEGORIES[resource.id],
+    coordinates: WORKFORCE_COORDINATES[resource.id] || null
   }));
 
 // Category order follows the most common workforce goals.
