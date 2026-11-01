@@ -15,28 +15,28 @@
       browse: "Browse programs", directoryTitle: "Choose your next step.", directoryCopy: "Filter by your workforce goal. Open any program for eligibility, accessibility, languages and contact details.",
       audience: "Audience", allAges: "All ages", youth: "Youth", adults: "Adults", format: "Format", anyFormat: "Any format", inPerson: "In person", online: "Online", freePrograms: "Free programs", englishClasses: "English classes",
       list: "List", map: "Map", reset: "Reset filters", noMatches: "No exact matches", noMatchesCopy: "Try a broader search or reset the filters.", showAll: "Show all programs",
-      matcherEyebrow: "Program matcher", matcherTitle: "Find a good place to start.", matcherIntro: "Answer three short questions. You can change the filters afterward.", matcherGoal: "What is your main goal?", matcherAge: "Who is the program for?", matcherFormat: "How would you prefer to participate?", eitherFormat: "Either", showMatches: "Show my matches",
+      matcherEyebrow: "Program matcher", matcherTitle: "Find a good place to start.", matcherIntro: "Answer three short questions. You can change the filters afterward.", matcherSelectMany: "Select all that apply in each section.", matcherGoal: "What are your goals?", matcherAge: "Who are the programs for?", matcherFormat: "How would you prefer to participate?", showMatches: "Show my matches", matcherSelectError: "Choose at least one option in each section.",
       viewDetails: "View details", call: "Call", website: "Website", directions: "Directions", save: "Save", remove: "Remove", program: "program", reviewed: "Record reviewed", share: "Share", print: "Print", linkCopied: "Program link copied.", shareUnavailable: "Copy this page address to share the program.",
       location: "Location", hours: "Hours", services: "Services", eligibility: "Eligibility", serves: "Who it serves", accessibility: "Accessibility", languages: "Languages", referrals: "Referrals / next steps", contact: "Point of contact",
       confirmTitle: "Please confirm before visiting.", confirmCopy: "Hours, eligibility, enrollment and language access can change. Use the official website or phone number above for current information.", mapFailed: "The interactive map could not load. Use list view to browse programs.",
       howEyebrow: "Use the guide", howTitle: "Plan your next move.", howCopy: "Compare programs, review requirements and contact the provider before applying.", step1: "Search your goal", step1Copy: "Use everyday words like “job,” “training,” “English” or “GED.”", step2: "Review the details", step2Copy: "Check who the program serves, hours, languages and accessibility.", step3: "Call before visiting", step3Copy: "Confirm availability and documents you may need before you travel.",
-      footerBuilt: "A student-built workforce directory.", footerNote: "Information was compiled from project documents and provider websites. Program hours, eligibility and enrollment can change, so contact the provider before applying or visiting.", projectNotes: "Project notes"
+      footerTitle: "Everett Workforce Guide", footerBuilt: "A student-built workforce directory.", footerNote: "Information was compiled from project documents and provider websites. Program hours, eligibility and enrollment can change, so contact the provider before applying or visiting.", projectNotes: "Project notes", email: "Email"
     },
     es: {
       skip: "Ir al directorio de recursos", brandSubtitle: "Guía de Empleo", navFind: "Buscar programas", navHow: "Cómo funciona", saved: "Guardados",
-      heroEyebrow: "Directorio laboral de Everett", heroTitle: "Encuentre apoyo laboral en Everett.", heroCopy: "Explore ayuda para buscar empleo, capacitación profesional, programas de inglés y GED, empleo juvenil y defensa de trabajadores en una guía clara.",
+      heroEyebrow: "Directorio laboral de Everett", heroTitle: "Encuentre apoyo laboral en Everett.", heroCopy: "Encuentre opciones de apoyo para buscar empleo, capacitación profesional, clases de inglés y preparación para el GED, empleo juvenil y defensa de los derechos laborales, todo en una guía clara.",
       searchLabel: "Buscar por servicio, organización o necesidad", searchPlaceholder: "Pruebe “clases de inglés” o “capacitación laboral”", searchButton: "Buscar", popular: "Popular:", catJob: "Búsqueda de empleo", catTraining: "Capacitación", catEducation: "Educación", catYouth: "Empleo juvenil",
-      startGoal: "Comience con su meta", goalJob: "Encontrar empleo", goalJobSub: "Solicitudes y orientación profesional", goalSkills: "Desarrollar habilidades", goalSkillsSub: "Credenciales y capacitación laboral", goalEducation: "Aprender inglés u obtener un GED", goalEducationShort: "Inglés o GED", goalEducationSub: "Programas de educación para adultos", goalSupport: "Obtener apoyo laboral", goalSupportSub: "Derechos, defensa y orientación",
-      matcherLaunch: "¿No sabe por dónde empezar? Encuentre su programa", statPrograms: "Programas laborales", statCategories: "Categorías laborales", statFree: "Gratis", statAccount: "No necesita una cuenta", callAhead: "Llame antes: los horarios y requisitos pueden cambiar.",
-      browse: "Explorar programas", directoryTitle: "Elija su próximo paso.", directoryCopy: "Filtre según su meta laboral. Abra un programa para ver elegibilidad, accesibilidad, idiomas y contacto.",
-      audience: "Público", allAges: "Todas las edades", youth: "Jóvenes", adults: "Adultos", format: "Modalidad", anyFormat: "Cualquier modalidad", inPerson: "Presencial", online: "En línea", freePrograms: "Programas gratuitos", englishClasses: "Clases de inglés",
+      startGoal: "Comience con su meta", goalJob: "Buscar empleo", goalJobSub: "Solicitudes y orientación profesional", goalSkills: "Desarrollar habilidades", goalSkillsSub: "Credenciales y capacitación laboral", goalEducation: "Aprender inglés u obtener un GED", goalEducationShort: "Inglés o GED", goalEducationSub: "Programas de educación para adultos", goalSupport: "Recibir apoyo para trabajadores", goalSupportSub: "Derechos, defensa y orientación",
+      matcherLaunch: "¿No sabe por dónde empezar? Buscar programas recomendados", statPrograms: "Programas laborales", statCategories: "Categorías laborales", statFree: "Gratis", statAccount: "No necesita una cuenta", callAhead: "Llame antes: los horarios y requisitos pueden cambiar.",
+      browse: "Ver programas", directoryTitle: "Encuentre su próximo paso.", directoryCopy: "Filtre según su meta laboral. Abra un programa para ver requisitos, accesibilidad, idiomas e información de contacto.",
+      audience: "Grupo de edad", allAges: "Todas las edades", youth: "Jóvenes", adults: "Adultos", format: "Modalidad", anyFormat: "Cualquier modalidad", inPerson: "Presencial", online: "En línea", freePrograms: "Programas gratuitos", englishClasses: "Clases de inglés",
       list: "Lista", map: "Mapa", reset: "Restablecer filtros", noMatches: "No hay coincidencias exactas", noMatchesCopy: "Pruebe una búsqueda más amplia o restablezca los filtros.", showAll: "Ver todos los programas",
-      matcherEyebrow: "Buscador de programas", matcherTitle: "Encuentre un buen lugar para comenzar.", matcherIntro: "Responda tres preguntas breves. Después puede cambiar los filtros.", matcherGoal: "¿Cuál es su meta principal?", matcherAge: "¿Para quién es el programa?", matcherFormat: "¿Cómo prefiere participar?", eitherFormat: "Cualquiera", showMatches: "Ver mis resultados",
+      matcherEyebrow: "Recomendador de programas", matcherTitle: "Encuentre un buen lugar para comenzar.", matcherIntro: "Responda tres preguntas breves. Después puede cambiar los filtros.", matcherSelectMany: "Seleccione todas las opciones que correspondan en cada sección.", matcherGoal: "¿Cuáles son sus metas?", matcherAge: "¿Para quién son los programas?", matcherFormat: "¿Cómo prefiere participar?", showMatches: "Ver programas recomendados", matcherSelectError: "Seleccione al menos una opción en cada sección.",
       viewDetails: "Ver detalles", call: "Llamar", website: "Sitio web", directions: "Cómo llegar", save: "Guardar", remove: "Quitar", program: "programa", reviewed: "Registro revisado", share: "Compartir", print: "Imprimir", linkCopied: "Enlace del programa copiado.", shareUnavailable: "Copie la dirección de esta página para compartir el programa.",
       location: "Ubicación", hours: "Horario", services: "Servicios", eligibility: "Elegibilidad", serves: "A quién atiende", accessibility: "Accesibilidad", languages: "Idiomas", referrals: "Referencias / próximos pasos", contact: "Punto de contacto",
       confirmTitle: "Confirme antes de visitar.", confirmCopy: "Los horarios, la elegibilidad, la inscripción y el acceso lingüístico pueden cambiar. Use el sitio oficial o el teléfono para obtener información actual.", mapFailed: "El mapa interactivo no pudo cargarse. Use la vista de lista para explorar los programas.",
       howEyebrow: "Use la guía", howTitle: "Planifique su próximo paso.", howCopy: "Compare programas, revise los requisitos y comuníquese con el proveedor antes de solicitar.", step1: "Busque su meta", step1Copy: "Use palabras comunes como “empleo”, “capacitación”, “inglés” o “GED”.", step2: "Revise los detalles", step2Copy: "Compruebe a quién atiende, los horarios, los idiomas y la accesibilidad.", step3: "Llame antes de visitar", step3Copy: "Confirme la disponibilidad y los documentos necesarios antes de viajar.",
-      footerBuilt: "Un directorio laboral creado por estudiantes.", footerNote: "La información se recopiló de documentos del proyecto y sitios web de proveedores. Los horarios, la elegibilidad y la inscripción pueden cambiar; comuníquese con el proveedor antes de solicitar o visitar.", projectNotes: "Notas del proyecto"
+      footerTitle: "Guía de Empleo de Everett", footerBuilt: "Un directorio laboral creado por estudiantes.", footerNote: "La información se recopiló de documentos del proyecto y sitios web de proveedores. Los horarios, la elegibilidad y la inscripción pueden cambiar; comuníquese con el proveedor antes de solicitar o visitar.", projectNotes: "Notas del proyecto", email: "Correo electrónico"
     }
   };
 
@@ -67,7 +67,7 @@
   const mapViewButton = $("#mapViewButton");
 
   const state = {
-    query: "", category: "All", audience: "all", format: "all", freeOnly: false,
+    query: "", categories: new Set(["All"]), audience: "all", format: "all", freeOnly: false,
     englishClassesOnly: false, savedOnly: false, view: "list",
     lang: localStorage.getItem("everett-language") === "es" ? "es" : "en",
     saved: new Set(JSON.parse(localStorage.getItem("everett-resource-saves") || "[]"))
@@ -89,7 +89,7 @@
 
   const visibleResources = () => RESOURCES.filter(resource => {
     const matchesQuery = !state.query || searchableText(resource).includes(state.query.toLowerCase());
-    const matchesCategory = state.category === "All" || resource.categories.includes(state.category);
+    const matchesCategory = state.categories.has("All") || resource.categories.some(category => state.categories.has(category));
     const matchesAudience = state.audience === "all" || resource.audiences.includes(state.audience);
     const matchesFormat = state.format === "all" || resource.formats.includes(state.format);
     const matchesFree = !state.freeOnly || resource.free;
@@ -105,8 +105,8 @@
       button.className = "category-button";
       button.textContent = categoryLabel(category);
       button.dataset.category = category;
-      button.setAttribute("aria-pressed", String(state.category === category));
-      button.addEventListener("click", () => { state.category = category; state.savedOnly = false; render(); });
+      button.setAttribute("aria-pressed", String(state.categories.has(category)));
+      button.addEventListener("click", () => { state.categories = new Set([category]); state.savedOnly = false; render(); });
       return button;
     }));
   }
@@ -163,7 +163,7 @@
     const route = directionsUrl(resource);
     const contactLinks = [
       resource.phone && `<a href="tel:${resource.phone.replace(/[^\d+]/g, "")}">${escapeHtml(t("call"))} ${escapeHtml(resource.phone)}</a>`,
-      resource.email && `<a href="mailto:${escapeHtml(resource.email)}">Email</a>`,
+      resource.email && `<a href="mailto:${escapeHtml(resource.email)}">${escapeHtml(t("email"))}</a>`,
       resource.website && `<a href="${escapeHtml(resource.website)}" target="_blank" rel="noopener">${escapeHtml(t("website"))} ↗</a>`,
       route && `<a href="${route}" target="_blank" rel="noopener">${escapeHtml(t("directions"))} ↗</a>`
     ].filter(Boolean).join("");
@@ -223,7 +223,7 @@
     else if (bounds.length === 1) resourceMap.setView(bounds[0], 14);
     else resourceMap.setView([42.406, -71.052], 13);
     const withoutLocation = resources.length - mapped.length;
-    if (state.lang === "es") mapInfo.textContent = `${mapped.length} ubicacion${mapped.length === 1 ? "" : "es"} en el mapa.${withoutLocation ? ` ${withoutLocation} programa${withoutLocation === 1 ? "" : "s"} en línea o de toda la ciudad ${withoutLocation === 1 ? "está" : "están"} disponible${withoutLocation === 1 ? "" : "s"} en la lista.` : ""}`;
+    if (state.lang === "es") mapInfo.textContent = `${mapped.length} ${mapped.length === 1 ? "ubicación" : "ubicaciones"} en el mapa.${withoutLocation ? ` ${withoutLocation} programa${withoutLocation === 1 ? "" : "s"} en línea o de toda la ciudad ${withoutLocation === 1 ? "está" : "están"} disponible${withoutLocation === 1 ? "" : "s"} en la lista.` : ""}`;
     else mapInfo.textContent = `${mapped.length} mapped location${mapped.length === 1 ? "" : "s"}.${withoutLocation ? ` ${withoutLocation} online or citywide program${withoutLocation === 1 ? " is" : "s are"} available in list view.` : ""}`;
     window.setTimeout(() => resourceMap.invalidateSize(), 0);
   }
@@ -253,7 +253,8 @@
   }
 
   function resetFilters() {
-    Object.assign(state, { query: "", category: "All", audience: "all", format: "all", freeOnly: false, englishClassesOnly: false, savedOnly: false });
+    Object.assign(state, { query: "", audience: "all", format: "all", freeOnly: false, englishClassesOnly: false, savedOnly: false });
+    state.categories = new Set(["All"]);
     syncControls(); render();
   }
 
@@ -270,15 +271,23 @@
     document.querySelector(".eligibility-filters").setAttribute("aria-label", state.lang === "es" ? "Filtros de elegibilidad y modalidad" : "Eligibility and format filters");
     document.querySelector(".quick-links").setAttribute("aria-label", state.lang === "es" ? "Búsquedas populares" : "Popular searches");
     mapView.setAttribute("aria-label", state.lang === "es" ? "Mapa de programas laborales" : "Map of workforce programs");
+    document.querySelector(".site-header nav").setAttribute("aria-label", state.lang === "es" ? "Navegación principal" : "Primary navigation");
+    document.querySelector(".workforce-paths").setAttribute("aria-label", state.lang === "es" ? "Metas laborales comunes" : "Common workforce goals");
+    document.querySelector(".trust-bar").setAttribute("aria-label", state.lang === "es" ? "Datos destacados de la guía" : "Guide highlights");
+    document.querySelector(".brand").setAttribute("aria-label", state.lang === "es" ? "Inicio de la Guía de Empleo de Everett" : "Everett Workforce Guide home");
+    document.querySelector(".view-toggle").setAttribute("aria-label", state.lang === "es" ? "Elegir vista del directorio" : "Choose directory view");
+    $("#resourceMap").setAttribute("aria-label", state.lang === "es" ? "Mapa interactivo de programas laborales filtrados" : "Interactive map of filtered workforce programs");
+    $("#dialogClose").setAttribute("aria-label", state.lang === "es" ? "Cerrar detalles" : "Close details");
+    $("#matcherClose").setAttribute("aria-label", state.lang === "es" ? "Cerrar recomendador de programas" : "Close program matcher");
     localStorage.setItem("everett-language", state.lang);
   }
 
   $("#heroSearch").addEventListener("submit", event => { event.preventDefault(); state.query = searchInput.value.trim(); state.savedOnly = false; render(); $("#directory").scrollIntoView({ behavior: "smooth" }); });
   let searchTimer;
   searchInput.addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.query = searchInput.value.trim(); state.savedOnly = false; render(); }, 160); });
-  document.querySelectorAll("[data-quick]").forEach(button => button.addEventListener("click", () => { state.query = ""; searchInput.value = ""; state.category = button.dataset.quick; state.savedOnly = false; render(); $("#directory").scrollIntoView({ behavior: "smooth" }); }));
+  document.querySelectorAll("[data-quick]").forEach(button => button.addEventListener("click", () => { state.query = ""; searchInput.value = ""; state.categories = new Set([button.dataset.quick]); state.savedOnly = false; render(); $("#directory").scrollIntoView({ behavior: "smooth" }); }));
   [audienceFilter, formatFilter, freeOnly, englishClassesOnly].forEach(control => control.addEventListener("change", () => { state.audience = audienceFilter.value; state.format = formatFilter.value; state.freeOnly = freeOnly.checked; state.englishClassesOnly = englishClassesOnly.checked; state.savedOnly = false; render(); }));
-  $("#savedNav").addEventListener("click", () => { state.savedOnly = !state.savedOnly; state.category = "All"; render(); $("#directory").scrollIntoView({ behavior: "smooth" }); });
+  $("#savedNav").addEventListener("click", () => { state.savedOnly = !state.savedOnly; state.categories = new Set(["All"]); render(); $("#directory").scrollIntoView({ behavior: "smooth" }); });
   $("#languageToggle").addEventListener("click", () => { state.lang = state.lang === "en" ? "es" : "en"; applyLanguage(); render(); if (currentResource) openDetails(currentResource, false); });
   listViewButton.addEventListener("click", () => setView("list"));
   mapViewButton.addEventListener("click", () => setView("map"));
@@ -291,13 +300,26 @@
     if (location.hash.startsWith("#program=")) history.replaceState(null, "", `${location.pathname}${location.search}`);
   });
 
-  $("#matcherLaunch").addEventListener("click", () => { matcherForm.reset(); matcherDialog.showModal(); });
+  $("#matcherLaunch").addEventListener("click", () => { matcherForm.reset(); $("#matcherError").textContent = ""; matcherDialog.showModal(); });
   $("#matcherClose").addEventListener("click", () => matcherDialog.close());
   matcherDialog.addEventListener("click", event => { if (event.target === matcherDialog) matcherDialog.close(); });
+  matcherForm.addEventListener("input", () => { $("#matcherError").textContent = ""; });
   matcherForm.addEventListener("submit", event => {
     event.preventDefault();
     const form = new FormData(matcherForm);
-    state.category = form.get("goal"); state.audience = form.get("audience"); state.format = form.get("format"); state.query = ""; state.savedOnly = false;
+    const goals = form.getAll("goal");
+    const audiences = form.getAll("audience");
+    const formats = form.getAll("format");
+    if (!goals.length || !audiences.length || !formats.length) {
+      $("#matcherError").textContent = t("matcherSelectError");
+      const firstEmptyGroup = !goals.length ? "goal" : !audiences.length ? "audience" : "format";
+      matcherForm.querySelector(`[data-matcher-group="${firstEmptyGroup}"] input`).focus();
+      return;
+    }
+    state.categories = new Set(goals);
+    state.audience = audiences.length > 1 ? "all" : audiences[0];
+    state.format = formats.length > 1 ? "all" : formats[0];
+    state.query = ""; state.savedOnly = false;
     syncControls(); matcherDialog.close(); render(); $("#directory").scrollIntoView({ behavior: "smooth" });
   });
 
