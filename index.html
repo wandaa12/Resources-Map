@@ -11,20 +11,21 @@
 </head>
 <body>
   <!-- Accessibility: keyboard users can skip repeated navigation. -->
-  <a class="skip-link" href="#directory">Skip to resource directory</a>
+  <a class="skip-link" href="#directory" data-i18n="skip">Skip to resource directory</a>
 
   <header class="site-header">
       <a class="brand" href="#top" aria-label="Everett Workforce Guide home">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 40 40"><path d="M20 36s12-10.3 12-21a12 12 0 1 0-24 0c0 10.7 12 21 12 21Z"/><circle cx="20" cy="15" r="4.5"/></svg>
       </span>
-      <span><strong>Everett</strong><small>Workforce Guide</small></span>
+      <span><strong>Everett</strong><small data-i18n="brandSubtitle">Workforce Guide</small></span>
     </a>
     <nav aria-label="Primary navigation">
-      <a href="#directory">Find programs</a>
-      <a href="#how-it-works">How it works</a>
+      <a href="#directory" data-i18n="navFind">Find programs</a>
+      <a href="#how-it-works" data-i18n="navHow">How it works</a>
+      <button class="language-toggle" id="languageToggle" type="button" aria-label="Cambiar a español">ES</button>
       <button class="saved-nav" id="savedNav" type="button" aria-label="Show saved programs">
-        Saved <span id="savedCount">0</span>
+        <span data-i18n="saved">Saved</span> <span id="savedCount">0</span>
       </button>
     </nav>
   </header>
@@ -33,60 +34,67 @@
     <!-- HERO: direct task language and useful workforce paths replace decorative mapping. -->
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero-content reveal">
-        <p class="eyebrow"><span></span> Everett workforce directory</p>
-        <h1 id="heroTitle">Find workforce support in Everett.</h1>
-        <p class="hero-copy">Explore job-search help, career training, English and GED programs, youth employment and worker advocacy in one clear guide.</p>
+        <p class="eyebrow"><span></span> <span data-i18n="heroEyebrow">Everett workforce directory</span></p>
+        <h1 id="heroTitle" data-i18n="heroTitle">Find workforce support in Everett.</h1>
+        <p class="hero-copy" data-i18n="heroCopy">Explore job-search help, career training, English and GED programs, youth employment and worker advocacy in one clear guide.</p>
 
         <form class="hero-search" id="heroSearch" role="search">
-          <label class="sr-only" for="searchInput">Search by service, organization, or need</label>
+          <label class="sr-only" for="searchInput" data-i18n="searchLabel">Search by service, organization, or need</label>
           <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
           <input id="searchInput" type="search" autocomplete="off" placeholder="Try “English classes” or “job training”">
-          <button type="submit">Search</button>
+          <button type="submit" data-i18n="searchButton">Search</button>
         </form>
 
         <div class="quick-links" aria-label="Popular searches">
-          <span>Popular:</span>
-          <button type="button" data-quick="Job Search">Job search</button>
-          <button type="button" data-quick="Training">Training</button>
-          <button type="button" data-quick="Education">Education</button>
-          <button type="button" data-quick="Youth Jobs">Youth jobs</button>
+          <span data-i18n="popular">Popular:</span>
+          <button type="button" data-quick="Job Search" data-i18n="catJob">Job search</button>
+          <button type="button" data-quick="Training" data-i18n="catTraining">Training</button>
+          <button type="button" data-quick="Education" data-i18n="catEducation">Education</button>
+          <button type="button" data-quick="Youth Jobs" data-i18n="catYouth">Youth jobs</button>
         </div>
+        <button class="matcher-launch" id="matcherLaunch" type="button" data-i18n="matcherLaunch">Not sure where to start? Find my program</button>
       </div>
 
       <aside class="workforce-paths reveal" aria-label="Common workforce goals">
-        <p>Start with your goal</p>
-        <button type="button" data-quick="Job Search"><span>01</span><strong>Find a job</strong><i>Applications and career coaching</i></button>
-        <button type="button" data-quick="Training"><span>02</span><strong>Build new skills</strong><i>Credentials and workforce training</i></button>
-        <button type="button" data-quick="Education"><span>03</span><strong>Learn English or earn a GED</strong><i>Adult education programs</i></button>
-        <button type="button" data-quick="Worker Support"><span>04</span><strong>Get worker support</strong><i>Rights, advocacy and navigation</i></button>
+        <p data-i18n="startGoal">Start with your goal</p>
+        <button type="button" data-quick="Job Search"><span>01</span><strong data-i18n="goalJob">Find a job</strong><i data-i18n="goalJobSub">Applications and career coaching</i></button>
+        <button type="button" data-quick="Training"><span>02</span><strong data-i18n="goalSkills">Build new skills</strong><i data-i18n="goalSkillsSub">Credentials and workforce training</i></button>
+        <button type="button" data-quick="Education"><span>03</span><strong data-i18n="goalEducation">Learn English or earn a GED</strong><i data-i18n="goalEducationSub">Adult education programs</i></button>
+        <button type="button" data-quick="Worker Support"><span>04</span><strong data-i18n="goalSupport">Get worker support</strong><i data-i18n="goalSupportSub">Rights, advocacy and navigation</i></button>
       </aside>
     </section>
 
     <!-- TRUST BAR: sets expectations for a directory with changing information. -->
     <section class="trust-bar" aria-label="Guide highlights">
-      <div><strong>13</strong><span>Workforce programs</span></div>
-      <div><strong>6</strong><span>Workforce categories</span></div>
-      <div><strong>Free</strong><span>No account required</span></div>
-      <p><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-5"/></svg> Call ahead: hours and eligibility can change.</p>
+      <div><strong>13</strong><span data-i18n="statPrograms">Workforce programs</span></div>
+      <div><strong>6</strong><span data-i18n="statCategories">Workforce categories</span></div>
+      <div><strong data-i18n="statFree">Free</strong><span data-i18n="statAccount">No account required</span></div>
+      <p><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-5"/></svg> <span data-i18n="callAhead">Call ahead: hours and eligibility can change.</span></p>
     </section>
 
     <section class="directory-section" id="directory" aria-labelledby="directoryTitle">
       <div class="section-heading reveal">
-        <div><p class="eyebrow dark"><span></span> Browse programs</p><h2 id="directoryTitle">Choose your next step.</h2></div>
-        <p>Filter by your workforce goal. Open any program for eligibility, accessibility, languages and contact details.</p>
+        <div><p class="eyebrow dark"><span></span> <span data-i18n="browse">Browse programs</span></p><h2 id="directoryTitle" data-i18n="directoryTitle">Choose your next step.</h2></div>
+        <p data-i18n="directoryCopy">Filter by your workforce goal. Open any program for eligibility, accessibility, languages and contact details.</p>
       </div>
 
       <div class="category-scroller" id="categoryFilters" aria-label="Filter by category"></div>
+
+      <div class="eligibility-filters" aria-label="Eligibility and format filters">
+        <label><span data-i18n="audience">Audience</span><select id="audienceFilter"><option value="all" data-i18n="allAges">All ages</option><option value="youth" data-i18n="youth">Youth</option><option value="adult" data-i18n="adults">Adults</option></select></label>
+        <label><span data-i18n="format">Format</span><select id="formatFilter"><option value="all" data-i18n="anyFormat">Any format</option><option value="inPerson" data-i18n="inPerson">In person</option><option value="online" data-i18n="online">Online</option></select></label>
+        <label class="filter-check"><input id="freeOnly" type="checkbox"><span></span><b data-i18n="freePrograms">Free programs</b></label>
+        <label class="filter-check"><input id="englishClassesOnly" type="checkbox"><span></span><b data-i18n="englishClasses">English classes</b></label>
+      </div>
 
       <div class="directory-toolbar">
         <p id="resultSummary" aria-live="polite">Showing all programs</p>
         <div class="toolbar-actions">
           <div class="view-toggle" aria-label="Choose directory view">
-            <button id="listViewButton" type="button" aria-pressed="true">List</button>
-            <button id="mapViewButton" type="button" aria-pressed="false">Map</button>
+            <button id="listViewButton" type="button" aria-pressed="true" data-i18n="list">List</button>
+            <button id="mapViewButton" type="button" aria-pressed="false" data-i18n="map">Map</button>
           </div>
-          <label class="toggle"><input id="bilingualOnly" type="checkbox"><span></span> Bilingual support</label>
-          <button class="filter-reset" id="resetFilters" type="button">Reset filters</button>
+          <button class="filter-reset" id="resetFilters" type="button" data-i18n="reset">Reset filters</button>
         </div>
       </div>
 
@@ -97,24 +105,24 @@
         <p id="mapInfo" aria-live="polite"></p>
       </section>
       <div class="empty-state" id="emptyState" hidden>
-        <span aria-hidden="true">⌕</span><h3>No exact matches</h3><p>Try a broader search or reset the filters.</p><button type="button" id="emptyReset">Show all programs</button>
+        <span aria-hidden="true">⌕</span><h3 data-i18n="noMatches">No exact matches</h3><p data-i18n="noMatchesCopy">Try a broader search or reset the filters.</p><button type="button" id="emptyReset" data-i18n="showAll">Show all programs</button>
       </div>
     </section>
 
     <section class="how-section" id="how-it-works" aria-labelledby="howTitle">
-      <div class="how-intro reveal"><p class="eyebrow light"><span></span> Use the guide</p><h2 id="howTitle">Plan your next move.</h2><p>Compare programs, review requirements and contact the provider before applying.</p></div>
+      <div class="how-intro reveal"><p class="eyebrow light"><span></span> <span data-i18n="howEyebrow">Use the guide</span></p><h2 id="howTitle" data-i18n="howTitle">Plan your next move.</h2><p data-i18n="howCopy">Compare programs, review requirements and contact the provider before applying.</p></div>
       <ol class="steps">
-        <li class="reveal"><span>01</span><div><h3>Search your goal</h3><p>Use everyday words like “job,” “training,” “English” or “GED.”</p></div></li>
-        <li class="reveal"><span>02</span><div><h3>Review the details</h3><p>Check who the program serves, hours, languages and accessibility.</p></div></li>
-        <li class="reveal"><span>03</span><div><h3>Call before visiting</h3><p>Confirm availability and documents you may need before you travel.</p></div></li>
+        <li class="reveal"><span>01</span><div><h3 data-i18n="step1">Search your goal</h3><p data-i18n="step1Copy">Use everyday words like “job,” “training,” “English” or “GED.”</p></div></li>
+        <li class="reveal"><span>02</span><div><h3 data-i18n="step2">Review the details</h3><p data-i18n="step2Copy">Check who the program serves, hours, languages and accessibility.</p></div></li>
+        <li class="reveal"><span>03</span><div><h3 data-i18n="step3">Call before visiting</h3><p data-i18n="step3Copy">Confirm availability and documents you may need before you travel.</p></div></li>
       </ol>
     </section>
   </main>
 
   <footer>
-    <div class="footer-brand"><span class="brand-mark small" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36s12-10.3 12-21a12 12 0 1 0-24 0c0 10.7 12 21 12 21Z"/><circle cx="20" cy="15" r="4.5"/></svg></span><p><strong>Everett Workforce Guide</strong><br>A student-built workforce directory.</p></div>
-    <p class="footer-note">Information was compiled from project documents and provider websites. Program hours, eligibility and enrollment can change, so contact the provider before applying or visiting.</p>
-    <div class="footer-links"><a href="PROJECT_NOTES.md">Project notes</a><a href="https://github.com/wandaa12/Resources-Map">GitHub</a></div>
+    <div class="footer-brand"><span class="brand-mark small" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 36s12-10.3 12-21a12 12 0 1 0-24 0c0 10.7 12 21 12 21Z"/><circle cx="20" cy="15" r="4.5"/></svg></span><p><strong>Everett Workforce Guide</strong><br><span data-i18n="footerBuilt">A student-built workforce directory.</span></p></div>
+    <p class="footer-note" data-i18n="footerNote">Information was compiled from project documents and provider websites. Program hours, eligibility and enrollment can change, so contact the provider before applying or visiting.</p>
+    <div class="footer-links"><a href="PROJECT_NOTES.md" data-i18n="projectNotes">Project notes</a><a href="https://github.com/wandaa12/Resources-Map">GitHub</a></div>
   </footer>
 
   <!-- DETAIL DIALOG: one reusable accessible modal for every resource. -->
@@ -123,13 +131,28 @@
     <div id="dialogContent"></div>
   </dialog>
 
+  <!-- MATCHER DIALOG: three answers are translated into the existing filters. -->
+  <dialog class="matcher-dialog" id="matcherDialog" aria-labelledby="matcherTitle">
+    <button class="dialog-close" id="matcherClose" type="button" aria-label="Close program matcher">×</button>
+    <form id="matcherForm">
+      <p class="eyebrow dark"><span></span> <span data-i18n="matcherEyebrow">Program matcher</span></p>
+      <h2 id="matcherTitle" data-i18n="matcherTitle">Find a good place to start.</h2>
+      <p class="matcher-intro" data-i18n="matcherIntro">Answer three short questions. You can change the filters afterward.</p>
+      <fieldset><legend data-i18n="matcherGoal">What is your main goal?</legend><label><input type="radio" name="goal" value="Job Search" required><span data-i18n="goalJob">Find a job</span></label><label><input type="radio" name="goal" value="Training"><span data-i18n="goalSkills">Build new skills</span></label><label><input type="radio" name="goal" value="Education"><span data-i18n="goalEducationShort">English or GED</span></label><label><input type="radio" name="goal" value="Worker Support"><span data-i18n="goalSupport">Get worker support</span></label></fieldset>
+      <fieldset><legend data-i18n="matcherAge">Who is the program for?</legend><label><input type="radio" name="audience" value="youth" required><span data-i18n="youth">Youth</span></label><label><input type="radio" name="audience" value="adult"><span data-i18n="adults">Adults</span></label></fieldset>
+      <fieldset><legend data-i18n="matcherFormat">How would you prefer to participate?</legend><label><input type="radio" name="format" value="all" required><span data-i18n="eitherFormat">Either</span></label><label><input type="radio" name="format" value="inPerson"><span data-i18n="inPerson">In person</span></label><label><input type="radio" name="format" value="online"><span data-i18n="online">Online</span></label></fieldset>
+      <button class="matcher-submit" type="submit" data-i18n="showMatches">Show my matches</button>
+    </form>
+  </dialog>
+
   <template id="resourceCardTemplate">
     <article class="resource-card reveal">
       <div class="card-top"><span class="category-badge"></span><button class="save-button" type="button" aria-label="Save program"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg></button></div>
       <h3></h3><p class="card-summary"></p>
       <ul class="card-meta"><li class="meta-location"></li><li class="meta-hours"></li></ul>
+      <p class="card-verified"></p>
       <div class="card-tags"></div>
-      <div class="card-actions"><button class="details-button" type="button">View details <span>→</span></button><a class="call-button" href="#">Call</a></div>
+      <div class="card-actions"><button class="details-button" type="button"><span class="details-label">View details</span> <span>→</span></button><a class="call-button" href="#">Call</a><a class="directions-button" href="#" target="_blank" rel="noopener">Directions</a></div>
     </article>
   </template>
 
