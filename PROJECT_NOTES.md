@@ -2,7 +2,7 @@
 
 ## Project purpose
 
-This repository turns a classroom community-resource inventory into a modern, searchable workforce directory for Everett, Massachusetts. The visual reference supplied by the group was the [Community Connections Free Clinic community-resource page](https://ccfcwi.org/patient-services/community-resources/). This implementation keeps the useful directory concept while replacing the long, static link list with search, workforce filters, list and map views, saved programs, accessible detail dialogs, responsive layouts and restrained motion.
+This repository turns a classroom community-resource inventory into a modern, searchable workforce directory for Everett, Massachusetts. The visual reference supplied by the group was the [Community Connections Free Clinic community-resource page](https://ccfcwi.org/patient-services/community-resources/). This implementation keeps the useful directory concept while replacing the long, static link list with search, workforce and eligibility filters, list and map views, saved programs, accessible detail dialogs, a short program matcher, responsive layouts and restrained motion.
 
 The current phase is intentionally limited to workforce services: job search, career training, adult education, youth employment, worker support and municipal jobs. Broader health, housing, food and general-service research remains in `data.js` for a possible later phase but is not displayed on the live site.
 
@@ -50,6 +50,11 @@ This six-page document reorganizes the group research into tables. It includes a
 - Visitors are reminded that hours, eligibility and enrollment can change.
 - The map uses Leaflet with OpenStreetMap tiles. Coordinates are stored in `data.js`, so no Google Maps key or geocoding API is required.
 - Online and citywide programs remain in list view because they do not have a single street location.
+- Directions links open the selected address in Google Maps without using a paid Maps API or exposing an API key.
+- Filters cover youth/adult audiences, free programs, English classes and online/in-person formats. Program metadata is explicit in `data.js` rather than inferred from keywords.
+- Each record displays its review date. This means the directory entry was reviewed; it does not guarantee that a provider has not changed its program since that date.
+- Share links use stable `#program=` URLs, and print styles turn an open program detail into a clean handout.
+- English and Spanish interface text and program descriptions are stored locally. Organization names, phone numbers, addresses and URLs retain their official form.
 
 ## Current online sources
 
@@ -71,8 +76,8 @@ These pages were used to confirm or expand information from the group documents:
 | --- | --- |
 | `index.html` | Semantic page structure, accessible dialog and resource-card template |
 | `styles.css` | Light blue-and-white editorial system, serif typography, responsive layout and reduced-motion support |
-| `data.js` | Editable research records plus the current workforce-only scope and categories |
-| `app.js` | Search, filtering, list/map switching, saved resources, details and reveal animations |
+| `data.js` | Editable research records, filter metadata, review dates, coordinates and Spanish program copy |
+| `app.js` | Search, eligibility filters, matcher, translation, list/map switching, saved resources, sharing, printing and details |
 | `netlify.toml` | Build-free Netlify configuration and security headers |
 
 ## Updating a resource
