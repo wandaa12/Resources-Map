@@ -2,7 +2,9 @@
 
 ## Project purpose
 
-This repository turns a classroom community-resource inventory into a modern, searchable directory for Everett, Massachusetts. The visual reference supplied by the group was the [Community Connections Free Clinic community-resource page](https://ccfcwi.org/patient-services/community-resources/). This implementation keeps the useful directory concept while replacing the long, static link list with search, category filters, saved resources, accessible detail dialogs, responsive layouts and restrained motion.
+This repository turns a classroom community-resource inventory into a modern, searchable workforce directory for Everett, Massachusetts. The visual reference supplied by the group was the [Community Connections Free Clinic community-resource page](https://ccfcwi.org/patient-services/community-resources/). This implementation keeps the useful directory concept while replacing the long, static link list with search, workforce filters, saved programs, accessible detail dialogs, responsive layouts and restrained motion.
+
+The current phase is intentionally limited to workforce services: job search, career training, adult education, youth employment, worker support and municipal jobs. Broader health, housing, food and general-service research remains in `data.js` for a possible later phase but is not displayed on the live site.
 
 ## Documents supplied for the project
 
@@ -43,7 +45,7 @@ This six-page document reorganizes the group research into tables. It includes a
 
 - Duplicate entries were consolidated.
 - Blank or unsupported details were not presented as facts; the site tells visitors to contact the provider.
-- Health, behavioral health, housing, legal and food entries were added from current official provider or government pages so the directory reaches 19 entries and covers every assignment category.
+- Duplicate and incomplete workforce entries were consolidated into 13 visible programs.
 - The linked Wisconsin website was used only as a structural reference. Its Wisconsin-specific resources were not copied into this Everett guide.
 - Visitors are reminded that hours, eligibility and enrollment can change.
 
@@ -66,8 +68,8 @@ These pages were used to confirm or expand information from the group documents:
 | File | Purpose |
 | --- | --- |
 | `index.html` | Semantic page structure, accessible dialog and resource-card template |
-| `styles.css` | Blue-and-white visual system, responsive layout and reduced-motion support |
-| `data.js` | Editable resource records and category definitions |
+| `styles.css` | Light blue-and-white editorial system, serif typography, responsive layout and reduced-motion support |
+| `data.js` | Editable research records plus the current workforce-only scope and categories |
 | `app.js` | Search, filtering, saved resources, details and reveal animations |
 | `netlify.toml` | Build-free Netlify configuration and security headers |
 
