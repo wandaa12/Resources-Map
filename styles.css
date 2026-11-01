@@ -183,10 +183,13 @@ dialog::backdrop { background: rgba(2,23,55,.68); backdrop-filter: blur(5px); }
 .matcher-dialog form { display: grid; gap: 20px; padding: 40px 34px 34px; }
 .matcher-dialog h2 { margin: -6px 0 0; color: var(--blue-950); font-size: clamp(2rem,5vw,3.1rem); line-height: 1; }
 .matcher-intro { margin: -8px 0 0; color: var(--muted); line-height: 1.6; }
+.matcher-select-many { margin: -12px 0 0; color: var(--blue-800); font: 700 .78rem/1.4 Arial, Helvetica, sans-serif; }
 .matcher-dialog fieldset { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; margin: 0; padding: 14px; border: 1px solid var(--border); border-radius: 10px; }
 .matcher-dialog legend { padding: 0 7px; color: var(--blue-900); font: 700 .82rem/1.3 Arial, Helvetica, sans-serif; }
 .matcher-dialog fieldset label { position: relative; display: flex; min-height: 42px; align-items: center; padding: 9px 11px; border: 1px solid var(--border); border-radius: 7px; color: var(--ink); background: var(--blue-050); font: 600 .82rem/1.3 Arial, Helvetica, sans-serif; cursor: pointer; }
 .matcher-dialog fieldset input { margin-right: 8px; accent-color: var(--blue-800); }
+.matcher-dialog fieldset label:has(input:checked) { border-color: var(--blue-700); color: var(--blue-950); background: var(--blue-100); box-shadow: inset 0 0 0 1px var(--blue-700); }
+.matcher-error { min-height: 1.2em; margin: -8px 0; color: #9b3440; font: 700 .78rem/1.4 Arial, Helvetica, sans-serif; }
 .matcher-submit { padding: 13px 18px; border: 0; border-radius: 8px; color: var(--white); background: var(--blue-800); font-weight: 800; cursor: pointer; }
 
 /* Reveal animations run only where motion is welcome. */
