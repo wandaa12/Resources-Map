@@ -77,13 +77,26 @@ These pages were used to confirm or expand information from the group documents:
 | --- | --- |
 | `index.html` | Semantic page structure, accessible dialog and resource-card template |
 | `styles.css` | Light blue-and-white editorial system, serif typography, responsive layout and reduced-motion support |
-| `data.js` | Editable research records, filter metadata, review dates, coordinates and Spanish program copy |
+| `data.js` | Published-sheet loader plus reviewed local backup records, filter metadata, coordinates and Spanish program copy |
 | `app.js` | Search, eligibility filters, matcher, translation, list/map switching, saved resources, sharing, printing and details |
 | `netlify.toml` | Build-free Netlify configuration and security headers |
 
-## Updating a resource
+## Updating resources without editing code
 
-Edit the matching object in `data.js`. Keep the existing field names so the card and detail dialog continue working. Confirm changes using the provider's official website or phone number, and update this document if a new source is added.
+The directory uses the **Programs** tab in the shared **Everett Workforce Resource Editor** Google Sheet as its day-to-day content editor. Each program is one row.
+
+- Add a resource by adding a row, creating a unique lowercase `id` and setting `active` to `TRUE`.
+- Edit a resource by changing its cells in the existing row.
+- Temporarily hide a resource by setting `active` to `FALSE`; this is safer than deleting it.
+- Delete a row only when the resource should be permanently removed.
+- Separate multiple `categories`, `audiences`, `formats` or tags with a vertical bar (`|`).
+- Add Spanish content in the columns ending in `_es`. If a Spanish text cell is blank, the English version is shown.
+- Add `latitude` and `longitude` only when a program has a specific map location. Online and citywide programs can leave both blank.
+- Use `YYYY-MM-DD` in `last_reviewed`, and confirm changes against the provider's official website or phone number.
+
+The published Programs tab is public read-only data because browsers must be able to load it. Editing remains limited to people explicitly invited through Google Sheets. The **Instructions** tab is for editors and is not read by the site.
+
+`data.js` also contains the reviewed local records as a fallback. If Google Sheets is temporarily unavailable or the sheet has no valid active rows, the site uses that backup instead of displaying an empty directory.
 
 ## Deployment
 
