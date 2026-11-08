@@ -330,7 +330,28 @@
     document.querySelectorAll(".reveal:not(.visible)").forEach(item => revealObserver.observe(item));
   }
 
-  applyLanguage(); syncControls(); render();
-  const sharedProgramId = new URLSearchParams(location.hash.replace(/^#/, "")).get("program");
-  if (sharedProgramId) { const sharedResource = RESOURCES.find(resource => resource.id === sharedProgramId); if (sharedResource) openDetails(sharedResource, false); }
+  function openSharedProgram() {
+    const sharedProgramId = new URLSearchParams(location.hash.replace(/^#/, "")).get("program");
+    if (!sharedProgramId) return;
+    const sharedResource = RESOURCES.find(resource => resource.id === sharedProgramId);
+    if (sharedResource) openDetails(sharedResource, false);
+  }
+
+  // Render the local backup immediately, then replace it with approved sheet
+  // rows when the shared editor is available.
+  applyLanguage();
+  syncControls();
+  render();
+  openSharedProgram();
+  loadResourcesFromSheet().then(sheetResources => {
+    if (!sheetResources) return;
+    RESOURCES = sheetResources;
+    document.documentElement.dataset.dataSource = "google-sheet";
+    render();
+    if (currentResource) {
+      const updatedResource = RESOURCES.find(resource => resource.id === currentResource.id);
+      if (updatedResource) openDetails(updatedResource, false);
+      else closeDetails();
+    } else openSharedProgram();
+  });
 })();
