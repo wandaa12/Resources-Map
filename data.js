@@ -528,7 +528,7 @@ const SPANISH_TRANSLATIONS = {
 
 const PROGRAM_REVIEW_DATE = "2026-11-01";
 
-const RESOURCES = ALL_RESOURCES
+let RESOURCES = ALL_RESOURCES
   .filter(resource => WORKFORCE_CATEGORIES[resource.id])
   .map(resource => ({
     ...resource,
@@ -542,3 +542,126 @@ const RESOURCES = ALL_RESOURCES
 
 // Category order follows the most common workforce goals.
 const CATEGORIES = ["All", "Job Search", "Training", "Education", "Youth Jobs", "Worker Support", "City Jobs"];
+
+/*
+  Shared editor
+  -------------
+  The Programs tab in this Google Sheet is the simple content-management
+  system for the directory. Approved editors can change rows in Sheets; the
+  public site only reads the published CSV and never receives edit access.
+
+  If the sheet is unavailable or contains no valid rows, RESOURCES keeps the
+  reviewed local records above so a temporary Google outage cannot empty the
+  directory.
+*/
+const RESOURCE_SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-LRyJjOU7jge1EbSN9_XAwdIUuHUEkW1izOYy49BsbGGjk6OxtlPmF4ReVruF7cn6horIxZ8-mb5w/pub?gid=0&single=true&output=csv";
+
+function parseCsv(csv) {
+  const rows = [];
+  let row = [];
+  let value = "";
+  let quoted = false;
+
+  for (let index = 0; index < csv.length; index += 1) {
+    const character = csv[index];
+    if (quoted) {
+      if (character === '"' && csv[index + 1] === '"') {
+        value += '"';
+        index += 1;
+      } else if (character === '"') quoted = false;
+      else value += character;
+    } else if (character === '"') quoted = true;
+    else if (character === ",") {
+      row.push(value);
+      value = "";
+    } else if (character === "\n") {
+      row.push(value.replace(/\r$/, ""));
+      rows.push(row);
+      row = [];
+      value = "";
+    } else value += character;
+  }
+
+  if (value || row.length) {
+    row.push(value.replace(/\r$/, ""));
+    rows.push(row);
+  }
+  return rows;
+}
+
+const splitSheetList = value => String(value || "").split("|").map(item => item.trim()).filter(Boolean);
+const sheetBoolean = value => ["true", "yes", "1", "y"].includes(String(value || "").trim().toLowerCase());
+
+function sheetReviewDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.valueOf()) ? PROGRAM_REVIEW_DATE : date.toISOString().slice(0, 10);
+}
+
+function sheetRowToResource(row) {
+  const latitude = Number.parseFloat(row.latitude);
+  const longitude = Number.parseFloat(row.longitude);
+  const categories = splitSheetList(row.categories);
+  const englishTags = splitSheetList(row.tags_en);
+  const spanishTags = splitSheetList(row.tags_es);
+
+  return {
+    id: row.id.trim(),
+    name: row.name.trim(),
+    category: row.category.trim() || categories[0] || "Job Search",
+    categories: categories.length ? categories : [row.category.trim() || "Job Search"],
+    summary: row.summary_en.trim(),
+    address: row.address.trim(),
+    phone: row.phone.trim(),
+    email: row.email.trim(),
+    website: row.website.trim(),
+    services: row.services_en.trim(),
+    eligibility: row.eligibility_en.trim(),
+    population: row.population_en.trim(),
+    hours: row.hours_en.trim(),
+    accessibility: row.accessibility_en.trim(),
+    languages: row.languages_en.trim(),
+    referrals: row.referrals_en.trim(),
+    contact: row.contact_en.trim(),
+    tags: englishTags,
+    audiences: splitSheetList(row.audiences),
+    free: sheetBoolean(row.free),
+    englishLearning: sheetBoolean(row.english_learning),
+    formats: splitSheetList(row.formats),
+    coordinates: Number.isFinite(latitude) && Number.isFinite(longitude) ? [latitude, longitude] : null,
+    verified: sheetReviewDate(row.last_reviewed),
+    translations: {
+      es: {
+        summary: row.summary_es.trim(),
+        address: row.address_es.trim(),
+        services: row.services_es.trim(),
+        eligibility: row.eligibility_es.trim(),
+        population: row.population_es.trim(),
+        hours: row.hours_es.trim(),
+        accessibility: row.accessibility_es.trim(),
+        languages: row.languages_es.trim(),
+        referrals: row.referrals_es.trim(),
+        contact: row.contact_es.trim(),
+        tags: spanishTags.length ? spanishTags : null
+      }
+    }
+  };
+}
+
+async function loadResourcesFromSheet() {
+  try {
+    const response = await fetch(RESOURCE_SHEET_CSV, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Sheet request failed with ${response.status}`);
+
+    const rows = parseCsv(await response.text());
+    const headers = (rows.shift() || []).map(header => header.trim());
+    const records = rows.map(values => Object.fromEntries(headers.map((header, index) => [header, String(values[index] || "")])))
+      .filter(row => sheetBoolean(row.active) && row.id?.trim() && row.name?.trim())
+      .map(sheetRowToResource);
+
+    if (!records.length) throw new Error("The sheet contains no active, valid programs.");
+    return records;
+  } catch (error) {
+    console.warn("Using the local resource backup because the shared editor could not be loaded.", error);
+    return null;
+  }
+}
