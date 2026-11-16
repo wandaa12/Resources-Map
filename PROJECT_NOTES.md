@@ -4,7 +4,7 @@
 
 This repository turns a classroom community-resource inventory into a modern, searchable workforce directory for Everett, Massachusetts. The visual reference supplied by the group was the [Community Connections Free Clinic community-resource page](https://ccfcwi.org/patient-services/community-resources/). This implementation keeps the useful directory concept while replacing the long, static link list with search, workforce and eligibility filters, list and map views, saved programs, accessible detail dialogs, a short program matcher, responsive layouts and restrained motion.
 
-The current phase is intentionally limited to workforce services: job search, career training, adult education, youth employment, worker support and municipal jobs. Broader health, housing, food and general-service research remains in `data.js` for a possible later phase but is not displayed on the live site.
+The directory remains centered on workforce services: job search, career training, adult education, youth employment, worker support and municipal jobs. A bounded **Support Services** category now includes family navigation, immigration help, accessible transportation, healthcare and food assistance that can remove practical barriers to employment. Broader community-service research remains in `data.js` for a possible later phase but is not displayed on the live site.
 
 ## Documents supplied for the project
 
@@ -45,7 +45,8 @@ This six-page document reorganizes the group research into tables. It includes a
 
 - Duplicate entries were consolidated.
 - Blank or unsupported details were not presented as facts; the site tells visitors to contact the provider.
-- Duplicate and incomplete workforce entries were consolidated into 13 visible programs.
+- Duplicate and incomplete entries were consolidated into 19 visible programs.
+- Six resources added in the November 2026 group update were reviewed and normalized: Everett Family Resource Center, Centro Comunitario Scalabrini, Operation ABLE, MBTA Mobility Center, CHA Everett Care Center and Bread of Life's Everett Family Care Pantry.
 - The linked Wisconsin website was used only as a structural reference. Its Wisconsin-specific resources were not copied into this Everett guide.
 - Visitors are reminded that hours, eligibility and enrollment can change.
 - The map uses Leaflet with OpenStreetMap tiles. Coordinates are stored in `data.js`, so no Google Maps key or geocoding API is required.
