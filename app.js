@@ -11,7 +11,7 @@
       heroEyebrow: "Everett workforce directory", heroTitle: "Find workforce support in Everett.", heroCopy: "Explore job-search help, career training, English and GED programs, youth employment and worker advocacy in one clear guide.",
       searchLabel: "Search by service, organization, or need", searchPlaceholder: "Try “English classes” or “job training”", searchButton: "Search", popular: "Popular:", catJob: "Job search", catTraining: "Training", catEducation: "Education", catYouth: "Youth jobs",
       startGoal: "Start with your goal", goalJob: "Find a job", goalJobSub: "Applications and career coaching", goalSkills: "Build new skills", goalSkillsSub: "Credentials and workforce training", goalEducation: "Learn English or earn a GED", goalEducationShort: "English or GED", goalEducationSub: "Adult education programs", goalSupport: "Get worker support", goalSupportSub: "Rights, advocacy and navigation",
-      matcherLaunch: "Not sure where to start? Find my program", statPrograms: "Workforce programs", statCategories: "Workforce categories", statFree: "Free", statAccount: "No account required", callAhead: "Call ahead: hours and eligibility can change.",
+      matcherLaunch: "Not sure where to start? Find my program", statPrograms: "Workforce and support programs", statCategories: "Program categories", statFree: "Free", statAccount: "No account required", callAhead: "Call ahead: hours and eligibility can change.",
       browse: "Browse programs", directoryTitle: "Choose your next step.", directoryCopy: "Filter by your workforce goal. Open any program for eligibility, accessibility, languages and contact details.",
       audience: "Audience", allAges: "All ages", youth: "Youth", adults: "Adults", format: "Format", anyFormat: "Any format", inPerson: "In person", online: "Online", freePrograms: "Free programs", englishClasses: "English classes",
       list: "List", map: "Map", reset: "Reset filters", noMatches: "No exact matches", noMatchesCopy: "Try a broader search or reset the filters.", showAll: "Show all programs",
@@ -27,7 +27,7 @@
       heroEyebrow: "Directorio laboral de Everett", heroTitle: "Encuentre apoyo laboral en Everett.", heroCopy: "Encuentre opciones de apoyo para buscar empleo, capacitación profesional, clases de inglés y preparación para el GED, empleo juvenil y defensa de los derechos laborales, todo en una guía clara.",
       searchLabel: "Buscar por servicio, organización o necesidad", searchPlaceholder: "Pruebe “clases de inglés” o “capacitación laboral”", searchButton: "Buscar", popular: "Popular:", catJob: "Búsqueda de empleo", catTraining: "Capacitación", catEducation: "Educación", catYouth: "Empleo juvenil",
       startGoal: "Comience con su meta", goalJob: "Buscar empleo", goalJobSub: "Solicitudes y orientación profesional", goalSkills: "Desarrollar habilidades", goalSkillsSub: "Credenciales y capacitación laboral", goalEducation: "Aprender inglés u obtener un GED", goalEducationShort: "Inglés o GED", goalEducationSub: "Programas de educación para adultos", goalSupport: "Recibir apoyo para trabajadores", goalSupportSub: "Derechos, defensa y orientación",
-      matcherLaunch: "¿No sabe por dónde empezar? Buscar programas recomendados", statPrograms: "Programas laborales", statCategories: "Categorías laborales", statFree: "Gratis", statAccount: "No necesita una cuenta", callAhead: "Llame antes: los horarios y requisitos pueden cambiar.",
+      matcherLaunch: "¿No sabe por dónde empezar? Buscar programas recomendados", statPrograms: "Programas laborales y de apoyo", statCategories: "Categorías de programas", statFree: "Gratis", statAccount: "No necesita una cuenta", callAhead: "Llame antes: los horarios y requisitos pueden cambiar.",
       browse: "Ver programas", directoryTitle: "Encuentre su próximo paso.", directoryCopy: "Filtre según su meta laboral. Abra un programa para ver requisitos, accesibilidad, idiomas e información de contacto.",
       audience: "Grupo de edad", allAges: "Todas las edades", youth: "Jóvenes", adults: "Adultos", format: "Modalidad", anyFormat: "Cualquier modalidad", inPerson: "Presencial", online: "En línea", freePrograms: "Programas gratuitos", englishClasses: "Clases de inglés",
       list: "Lista", map: "Mapa", reset: "Restablecer filtros", noMatches: "No hay coincidencias exactas", noMatchesCopy: "Pruebe una búsqueda más amplia o restablezca los filtros.", showAll: "Ver todos los programas",
@@ -41,8 +41,8 @@
   };
 
   const CATEGORY_LABELS = {
-    en: { All: "All", "Job Search": "Job Search", Training: "Training", Education: "Education", "Youth Jobs": "Youth Jobs", "Worker Support": "Worker Support", "City Jobs": "City Jobs" },
-    es: { All: "Todos", "Job Search": "Búsqueda de empleo", Training: "Capacitación", Education: "Educación", "Youth Jobs": "Empleo juvenil", "Worker Support": "Apoyo laboral", "City Jobs": "Empleos municipales" }
+    en: { All: "All", "Job Search": "Job Search", Training: "Training", Education: "Education", "Youth Jobs": "Youth Jobs", "Worker Support": "Worker Support", "City Jobs": "City Jobs", "Support Services": "Support Services" },
+    es: { All: "Todos", "Job Search": "Búsqueda de empleo", Training: "Capacitación", Education: "Educación", "Youth Jobs": "Empleo juvenil", "Worker Support": "Apoyo laboral", "City Jobs": "Empleos municipales", "Support Services": "Servicios de apoyo" }
   };
 
   const $ = selector => document.querySelector(selector);
@@ -57,6 +57,8 @@
   const resultSummary = $("#resultSummary");
   const emptyState = $("#emptyState");
   const savedCount = $("#savedCount");
+  const programStat = $("#programStat");
+  const categoryStat = $("#categoryStat");
   const dialog = $("#resourceDialog");
   const dialogContent = $("#dialogContent");
   const matcherDialog = $("#matcherDialog");
@@ -238,6 +240,8 @@
 
   function render() {
     const resources = visibleResources();
+    programStat.textContent = RESOURCES.length;
+    categoryStat.textContent = CATEGORIES.length - 1;
     grid.replaceChildren(...resources.map(createCard));
     renderCategoryFilters();
     savedCount.textContent = state.saved.size;
