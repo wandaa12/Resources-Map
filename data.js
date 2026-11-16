@@ -369,6 +369,86 @@ const ALL_RESOURCES = [
     tags: ["Groceries", "Weekly", "Delivery"], bilingual: true
   },
   {
+    id: "everett-family-resource-center",
+    name: "Everett Family Resource Center",
+    category: "Community",
+    categories: ["Community", "Education"],
+    summary: "Multilingual family support, parenting programs and referrals that help households connect with childcare, education, employment and community services.",
+    address: "548 Broadway, Everett, MA 02149",
+    phone: "781-581-4750",
+    email: "",
+    website: "https://frcma.org/intranet/location/everett-family-resource-center/",
+    services: "Family support, parenting programs, support groups, information and referrals for childcare, education, vocational services and other community needs.",
+    eligibility: "Open to families and community members seeking support. Individual programs may have additional requirements.",
+    population: "Children, parents, caregivers and families who need support or help navigating services.",
+    hours: "Mon-Tue 8 AM-4 PM; Wed-Thu 8 AM-6 PM; Fri 8 AM-1 PM; additional hours by appointment",
+    accessibility: "Central Broadway location; call about disability accommodations and appointment options.",
+    languages: "English, Spanish, Portuguese and Haitian Creole.",
+    referrals: "Accepts self-referrals and referrals from schools, healthcare providers and community agencies.",
+    contact: "Family Resource Center staff",
+    tags: ["Family support", "Childcare referrals", "Multilingual"], bilingual: true
+  },
+  {
+    id: "centro-scalabrini",
+    name: "Centro Comunitario Scalabrini",
+    category: "Community",
+    categories: ["Community", "Education", "Legal & Advocacy"],
+    summary: "Free, culturally responsive guidance and referrals for immigrants adjusting to life in the Everett community.",
+    address: "63 Oakes Street, Everett, MA 02149",
+    phone: "617-387-1393",
+    email: "",
+    website: "https://www.simn-global.org/centros-scalabrinianos/centro/scalabrini-community-center-everett/",
+    services: "Immigration-document guidance, legal and psychological referrals, adult ESL, health-insurance applications, food-benefit support and spiritual care.",
+    eligibility: "Free services for immigrants and community members; availability varies by service and appointment capacity.",
+    population: "Immigrants, refugees and immigrant families in Everett and nearby communities.",
+    hours: "Monday-Friday; call to confirm current appointment and walk-in hours",
+    accessibility: "Neighborhood center at Saint Anthony Parish; call about mobility accommodations.",
+    languages: "Culturally responsive multilingual support; call to confirm the language needed.",
+    referrals: "Connects visitors with qualified legal, healthcare and social-service organizations.",
+    contact: "Centro Comunitario Scalabrini staff",
+    tags: ["Immigration", "ESL", "Free"], bilingual: true
+  },
+  {
+    id: "operation-able",
+    name: "Operation ABLE of Greater Boston",
+    category: "Employment",
+    categories: ["Employment", "Education"],
+    summary: "Career coaching, job-search support, digital-skills training and work-based learning for job seekers, with specialized programs for adults age 55 and older.",
+    address: "98 North Washington Street, Suite 200, Boston, MA 02114",
+    phone: "617-542-4180",
+    email: "",
+    website: "https://operationable.net/",
+    services: "Computer and occupational-skills training, job-search assistance, career coaching, counseling, internships and paid community-based training through eligible programs.",
+    eligibility: "Requirements vary. The SCSEP program generally serves unemployed, low-income adults age 55+ who meet work-authorization and service-area rules; other training has separate eligibility.",
+    population: "Adults seeking employment or digital skills, especially mature workers and job seekers facing economic barriers.",
+    hours: "Program and information-session schedules vary; contact Operation ABLE before visiting",
+    accessibility: "In-person and virtual training options; auxiliary aids and services are available on request.",
+    languages: "Contact the organization to request language assistance.",
+    referrals: "Accepts self-referrals and referrals from MassHire, libraries and community organizations.",
+    contact: "Operation ABLE intake staff",
+    tags: ["Job search", "Digital skills", "Age 55+"], bilingual: false
+  },
+  {
+    id: "mbta-mobility-center",
+    name: "MBTA Mobility Center",
+    category: "Community",
+    categories: ["Community"],
+    summary: "Free help planning accessible transportation, applying for reduced fares and learning how to use fixed-route transit or The RIDE.",
+    address: "1000 Massachusetts Avenue, Suite 201, Boston, MA 02118",
+    phone: "617-337-2727",
+    email: "mbtamobility@mtm-inc.net",
+    website: "https://www.mbta.com/accessibility/mbta-mobility-center",
+    services: "Accessible trip planning, travel training, The RIDE eligibility appointments, reduced-fare applications and connections to other transportation options.",
+    eligibility: "Open to anyone exploring accessible transportation. The RIDE and reduced-fare programs have their own eligibility requirements.",
+    population: "Older adults, people with disabilities, caregivers and anyone who needs accessible transportation guidance.",
+    hours: "Monday-Friday, 8:30 AM-5:00 PM; appointments recommended",
+    accessibility: "Services are available in person or virtually and are designed around individual mobility needs.",
+    languages: "Services are available in multiple languages at no cost; request the language needed.",
+    referrals: "Connects visitors to The RIDE, travel training, reduced-fare programs and community transportation options.",
+    contact: "Mobility Center staff",
+    tags: ["Accessible transit", "The RIDE", "Reduced fares"], bilingual: true
+  },
+  {
     id: "findhelp",
     name: "Findhelp Resource Search",
     category: "Community",
@@ -391,9 +471,8 @@ const ALL_RESOURCES = [
 ];
 
 /*
-  Phase-one scope: workforce only.
-  The broader research records remain above so later phases can restore health,
-  housing, food and other services without repeating the research work.
+  Workforce programs remain the primary scope. A small Support Services group
+  covers practical barriers such as childcare, transportation, health and food.
 */
 const WORKFORCE_CATEGORIES = {
   "masshire-metro-north": ["Job Search", "Training"],
@@ -408,6 +487,12 @@ const WORKFORCE_CATEGORIES = {
   "everett-community-growers": ["Youth Jobs", "Training"],
   "everett-adult-learning": ["Education", "Training"],
   "luma": ["Worker Support"],
+  "everett-family-resource-center": ["Support Services", "Education"],
+  "centro-scalabrini": ["Support Services", "Education"],
+  "operation-able": ["Job Search", "Training"],
+  "mbta-mobility-center": ["Support Services"],
+  "cha-everett": ["Support Services"],
+  "bread-of-life-everett": ["Support Services"],
   "findhelp": ["Job Search"]
 };
 
@@ -424,7 +509,13 @@ const WORKFORCE_COORDINATES = {
   "everett-library": [42.4060155, -71.0568179],
   "everett-human-resources": [42.4083637, -71.0546941],
   "everett-adult-learning": [42.4106815, -71.0538537],
-  "luma": [42.4107176, -71.0458341]
+  "luma": [42.4107176, -71.0458341],
+  "everett-family-resource-center": [42.4106815, -71.0538537],
+  "centro-scalabrini": [42.4049893, -71.0587295],
+  "operation-able": [42.3656240, -71.0587343],
+  "mbta-mobility-center": [42.3278598, -71.0675624],
+  "cha-everett": [42.4054080, -71.0564942],
+  "bread-of-life-everett": [42.4022942, -71.0426804]
 };
 
 /*
@@ -444,6 +535,12 @@ const PROGRAM_FILTERS = {
   "everett-community-growers": { audiences: ["youth"], free: true, englishLearning: false, formats: ["inPerson"] },
   "everett-adult-learning": { audiences: ["adult"], free: true, englishLearning: true, formats: ["inPerson", "online"] },
   "luma": { audiences: ["adult"], free: true, englishLearning: false, formats: ["inPerson"] },
+  "everett-family-resource-center": { audiences: ["youth", "adult"], free: true, englishLearning: false, formats: ["inPerson"] },
+  "centro-scalabrini": { audiences: ["adult"], free: true, englishLearning: true, formats: ["inPerson"] },
+  "operation-able": { audiences: ["adult"], free: false, englishLearning: false, formats: ["inPerson", "online"] },
+  "mbta-mobility-center": { audiences: ["youth", "adult"], free: true, englishLearning: false, formats: ["inPerson", "online"] },
+  "cha-everett": { audiences: ["youth", "adult"], free: false, englishLearning: false, formats: ["inPerson", "online"] },
+  "bread-of-life-everett": { audiences: ["youth", "adult"], free: true, englishLearning: false, formats: ["inPerson"] },
   "findhelp": { audiences: ["youth", "adult"], free: true, englishLearning: false, formats: ["online"] }
 };
 
@@ -541,7 +638,7 @@ let RESOURCES = ALL_RESOURCES
   }));
 
 // Category order follows the most common workforce goals.
-const CATEGORIES = ["All", "Job Search", "Training", "Education", "Youth Jobs", "Worker Support", "City Jobs"];
+const CATEGORIES = ["All", "Job Search", "Training", "Education", "Youth Jobs", "Worker Support", "City Jobs", "Support Services"];
 
 /*
   Shared editor
