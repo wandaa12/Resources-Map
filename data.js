@@ -625,7 +625,7 @@ const SPANISH_TRANSLATIONS = {
 
 const PROGRAM_REVIEW_DATE = "2026-11-01";
 
-let RESOURCES = ALL_RESOURCES
+const BACKUP_RESOURCES = ALL_RESOURCES
   .filter(resource => WORKFORCE_CATEGORIES[resource.id])
   .map(resource => ({
     ...resource,
@@ -647,9 +647,8 @@ const CATEGORIES = ["All", "Job Search", "Training", "Education", "Youth Jobs", 
   system for the directory. Approved editors can change rows in Sheets; the
   public site only reads the published CSV and never receives edit access.
 
-  If the sheet is unavailable or contains no valid rows, RESOURCES keeps the
-  reviewed local records above so a temporary Google outage cannot empty the
-  directory.
+  A valid empty sheet is authoritative. The backup is used when the feed is
+  unavailable or invalid.
 */
 const RESOURCE_SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-LRyJjOU7jge1EbSN9_XAwdIUuHUEkW1izOYy49BsbGGjk6OxtlPmF4ReVruF7cn6horIxZ8-mb5w/pub?gid=0&single=true&output=csv";
 
@@ -658,6 +657,7 @@ function parseCsv(csv) {
   let row = [];
   let value = "";
   let quoted = false;
+  let closedQuote = false;
 
   for (let index = 0; index < csv.length; index += 1) {
     const character = csv[index];
@@ -665,21 +665,30 @@ function parseCsv(csv) {
       if (character === '"' && csv[index + 1] === '"') {
         value += '"';
         index += 1;
-      } else if (character === '"') quoted = false;
-      else value += character;
-    } else if (character === '"') quoted = true;
-    else if (character === ",") {
+      } else if (character === '"') {
+        quoted = false;
+        closedQuote = true;
+      } else value += character;
+    } else if (character === '"') {
+      if (value || closedQuote) throw new Error("Unexpected quote in the sheet CSV.");
+      quoted = true;
+    } else if (character === ",") {
       row.push(value);
       value = "";
+      closedQuote = false;
     } else if (character === "\n") {
       row.push(value.replace(/\r$/, ""));
       rows.push(row);
       row = [];
       value = "";
+      closedQuote = false;
+    } else if (closedQuote) {
+      if (character !== "\r" || csv[index + 1] !== "\n") throw new Error("Unexpected text after a quoted CSV cell.");
     } else value += character;
   }
 
-  if (value || row.length) {
+  if (quoted) throw new Error("Unclosed quote in the sheet CSV.");
+  if (value || row.length || closedQuote) {
     row.push(value.replace(/\r$/, ""));
     rows.push(row);
   }
@@ -687,57 +696,85 @@ function parseCsv(csv) {
 }
 
 const splitSheetList = value => String(value || "").split("|").map(item => item.trim()).filter(Boolean);
-const sheetBoolean = value => ["true", "yes", "1", "y"].includes(String(value || "").trim().toLowerCase());
+const trueSheetValues = ["true", "yes", "1", "y"];
+const falseSheetValues = ["false", "no", "0", "n"];
+const sheetBoolean = value => trueSheetValues.includes(value.toLowerCase());
 
 function sheetReviewDate(value) {
-  const date = new Date(value);
-  return Number.isNaN(date.valueOf()) ? PROGRAM_REVIEW_DATE : date.toISOString().slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const date = new Date(value + "T00:00:00Z");
+  return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value ? value : null;
+}
+
+function sheetWebsite(value) {
+  try {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function sheetCoordinates({ latitude, longitude }) {
+  if (!latitude || !longitude) return null;
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+  return Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? [lat, lng] : null;
 }
 
 function sheetRowToResource(row) {
-  const latitude = Number.parseFloat(row.latitude);
-  const longitude = Number.parseFloat(row.longitude);
-  const categories = splitSheetList(row.categories);
-  const englishTags = splitSheetList(row.tags_en);
-  const spanishTags = splitSheetList(row.tags_es);
+  const cell = key => row[key] ?? "";
+  const categories = splitSheetList(cell("categories"));
+  const category = cell("category") || categories[0] || "Job Search";
+  const audiences = splitSheetList(cell("audiences"));
+  const formats = splitSheetList(cell("formats"));
+  const englishTags = splitSheetList(cell("tags_en"));
+  const spanishTags = splitSheetList(cell("tags_es"));
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(cell("id")) || !cell("name") ||
+      [category, ...categories].some(item => item === "All" || !CATEGORIES.includes(item)) ||
+      audiences.some(item => !["adult", "youth"].includes(item)) ||
+      formats.some(item => !["inPerson", "online"].includes(item)) ||
+      [cell("free"), cell("english_learning")].some(value => value && !sheetBoolean(value) && !falseSheetValues.includes(value.toLowerCase()))) {
+    return null;
+  }
 
   return {
-    id: row.id.trim(),
-    name: row.name.trim(),
-    category: row.category.trim() || categories[0] || "Job Search",
-    categories: categories.length ? categories : [row.category.trim() || "Job Search"],
-    summary: row.summary_en.trim(),
-    address: row.address.trim(),
-    phone: row.phone.trim(),
-    email: row.email.trim(),
-    website: row.website.trim(),
-    services: row.services_en.trim(),
-    eligibility: row.eligibility_en.trim(),
-    population: row.population_en.trim(),
-    hours: row.hours_en.trim(),
-    accessibility: row.accessibility_en.trim(),
-    languages: row.languages_en.trim(),
-    referrals: row.referrals_en.trim(),
-    contact: row.contact_en.trim(),
+    id: cell("id"),
+    name: cell("name"),
+    category,
+    categories: [...new Set([category, ...categories])],
+    summary: cell("summary_en"),
+    address: cell("address"),
+    phone: cell("phone"),
+    email: cell("email"),
+    website: sheetWebsite(cell("website")),
+    services: cell("services_en"),
+    eligibility: cell("eligibility_en"),
+    population: cell("population_en"),
+    hours: cell("hours_en"),
+    accessibility: cell("accessibility_en"),
+    languages: cell("languages_en"),
+    referrals: cell("referrals_en"),
+    contact: cell("contact_en"),
     tags: englishTags,
-    audiences: splitSheetList(row.audiences),
-    free: sheetBoolean(row.free),
-    englishLearning: sheetBoolean(row.english_learning),
-    formats: splitSheetList(row.formats),
-    coordinates: Number.isFinite(latitude) && Number.isFinite(longitude) ? [latitude, longitude] : null,
-    verified: sheetReviewDate(row.last_reviewed),
+    audiences,
+    free: sheetBoolean(cell("free")),
+    englishLearning: sheetBoolean(cell("english_learning")),
+    formats,
+    coordinates: sheetCoordinates(row),
+    verified: sheetReviewDate(cell("last_reviewed")),
     translations: {
       es: {
-        summary: row.summary_es.trim(),
-        address: row.address_es.trim(),
-        services: row.services_es.trim(),
-        eligibility: row.eligibility_es.trim(),
-        population: row.population_es.trim(),
-        hours: row.hours_es.trim(),
-        accessibility: row.accessibility_es.trim(),
-        languages: row.languages_es.trim(),
-        referrals: row.referrals_es.trim(),
-        contact: row.contact_es.trim(),
+        summary: cell("summary_es"),
+        address: cell("address_es"),
+        services: cell("services_es"),
+        eligibility: cell("eligibility_es"),
+        population: cell("population_es"),
+        hours: cell("hours_es"),
+        accessibility: cell("accessibility_es"),
+        languages: cell("languages_es"),
+        referrals: cell("referrals_es"),
+        contact: cell("contact_es"),
         tags: spanishTags.length ? spanishTags : null
       }
     }
@@ -745,20 +782,47 @@ function sheetRowToResource(row) {
 }
 
 async function loadResourcesFromSheet() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetch(RESOURCE_SHEET_CSV, { cache: "no-store" });
+    const response = await fetch(RESOURCE_SHEET_CSV, { cache: "no-store", signal: controller.signal });
     if (!response.ok) throw new Error(`Sheet request failed with ${response.status}`);
 
-    const rows = parseCsv(await response.text());
+    const rows = parseCsv((await response.text()).replace(/^\uFEFF/, ""));
     const headers = (rows.shift() || []).map(header => header.trim());
-    const records = rows.map(values => Object.fromEntries(headers.map((header, index) => [header, String(values[index] || "")])))
-      .filter(row => sheetBoolean(row.active) && row.id?.trim() && row.name?.trim())
-      .map(sheetRowToResource);
+    const namedHeaders = headers.filter(Boolean);
+    if (["active", "id", "name"].some(header => !headers.includes(header)) ||
+        new Set(namedHeaders).size !== namedHeaders.length) {
+      throw new Error("The sheet needs unique headers including active, id and name.");
+    }
 
-    if (!records.length) throw new Error("The sheet contains no active, valid programs.");
+    const records = [];
+    const ids = new Set();
+    let invalidRows = 0;
+    rows.forEach(values => {
+      if (values.every(value => !value.trim())) return;
+      const fields = Object.fromEntries(headers.map((header, index) => [header, (values[index] || "").trim()]));
+      if (falseSheetValues.includes(fields.active.toLowerCase())) return;
+      if (!sheetBoolean(fields.active) || values.slice(headers.length).some(value => value.trim())) {
+        invalidRows++;
+        return;
+      }
+      const resource = sheetRowToResource(fields);
+      if (!resource || ids.has(resource.id)) {
+        invalidRows++;
+        return;
+      }
+      ids.add(resource.id);
+      records.push(resource);
+    });
+
+    if (invalidRows && !records.length) throw new Error("The sheet contains invalid program rows and no usable listings.");
+    if (invalidRows) console.warn(`Skipped ${invalidRows} invalid or duplicate program row(s).`);
     return records;
   } catch (error) {
     console.warn("Using the local resource backup because the shared editor could not be loaded.", error);
     return null;
+  } finally {
+    clearTimeout(timeout);
   }
 }

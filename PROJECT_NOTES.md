@@ -97,7 +97,7 @@ The directory uses the **Programs** tab in the shared **Everett Workforce Resour
 
 The published Programs tab is public read-only data because browsers must be able to load it. Editing remains limited to people explicitly invited through Google Sheets. The **Instructions** tab is for editors and is not read by the site.
 
-`data.js` also contains the reviewed local records as a fallback. If Google Sheets is temporarily unavailable or the sheet has no valid active rows, the site uses that backup instead of displaying an empty directory.
+`data.js` contains reviewed local backup records. The site uses them if the published sheet is unavailable or invalid. A valid sheet with no program rows, or with every program explicitly set to `FALSE`, shows an empty directory. The `active`, `id` and `name` headers must stay in place. Invalid active rows are skipped if other valid listings remain.
 
 ## Deployment
 

@@ -66,7 +66,7 @@
 
     <!-- TRUST BAR: sets expectations for a directory with changing information. -->
     <section class="trust-bar" aria-label="Guide highlights">
-      <div><strong id="programStat">13</strong><span data-i18n="statPrograms">Workforce and support programs</span></div>
+      <div><strong id="programStat">—</strong><span data-i18n="statPrograms">Workforce and support programs</span></div>
       <div><strong id="categoryStat">6</strong><span data-i18n="statCategories">Program categories</span></div>
       <div><strong data-i18n="statFree">Free</strong><span data-i18n="statAccount">No account required</span></div>
       <p><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-5"/></svg> <span data-i18n="callAhead">Call ahead: hours and eligibility can change.</span></p>
@@ -88,7 +88,7 @@
       </div>
 
       <div class="directory-toolbar">
-        <p id="resultSummary" aria-live="polite">Showing all programs</p>
+        <p id="resultSummary" aria-live="polite">Loading programs…</p>
         <div class="toolbar-actions">
           <div class="view-toggle" aria-label="Choose directory view">
             <button id="listViewButton" type="button" aria-pressed="true" data-i18n="list">List</button>
@@ -105,7 +105,9 @@
         <p id="mapInfo" aria-live="polite"></p>
       </section>
       <div class="empty-state" id="emptyState" hidden>
-        <span aria-hidden="true">⌕</span><h3 data-i18n="noMatches">No exact matches</h3><p data-i18n="noMatchesCopy">Try a broader search or reset the filters.</p><button type="button" id="emptyReset" data-i18n="showAll">Show all programs</button>
+        <span aria-hidden="true">⌕</span>
+        <div id="emptyDirectory" hidden><h3 data-i18n="emptyDirectory">No programs are currently listed.</h3></div>
+        <div id="emptyFilters"><h3 data-i18n="noMatches">No exact matches</h3><p data-i18n="noMatchesCopy">Try a broader search or reset the filters.</p><button type="button" id="emptyReset" data-i18n="showAll">Show all programs</button></div>
       </div>
     </section>
 
