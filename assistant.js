@@ -24,6 +24,7 @@ function createResourceAssistant(directory) {
   let aiRequest;
   let searchContext;
   let pendingQuestion = "";
+  let pendingGoals;
 
   const copy = {
     en: {
@@ -32,7 +33,7 @@ function createResourceAssistant(directory) {
       input: "Your message", send: "Send", mic: "Speak", stop: "Done speaking", replay: "Replay", replayLabel: "Replay reply",
       voice: "Reply voice", voiceAuto: "Automatic", voiceNone: "No local voices",
       settings: "Chat settings", aiLabel: "Use AI to understand my questions",
-      aiNotice: "AI help sends your current message or voice transcript to Cloudflare. Please leave out personal information.",
+      aiNotice: "If the guide needs help understanding your question, it sends your current message or voice transcript to Cloudflare. Please leave out personal information.",
       aiThinking: "Looking at what you’re asking…", aiFallback: "AI help is unavailable. The directory assistant answered instead.",
       askFormat: "Would an online option work for you, or would you rather go in person?",
       scheduleNote: "These listings mention the time you asked for. Call ahead to confirm the schedule.",
@@ -49,6 +50,9 @@ function createResourceAssistant(directory) {
       empty: "There are no programs listed right now. Please check back later.",
       unknown: "Tell me a little about what you need. For example, “I lost my job” or “I can only take English classes on weekends.”",
       noMatch: "I couldn’t find a match in this guide. Would you like to try a different search?",
+      chooseGoal: topics => `You mentioned ${topics}. Which would you like to start with?`,
+      housingResults: "These listings mention housing help. Contact the provider to ask what’s available, including whether they can help with rent.",
+      goalNames: { english: "English classes", ged: "GED or high school", food: "Food", housing: "Housing or rent", transport: "Transportation", health: "Health care", family: "Family or child care", immigration: "Immigration support", worker: "Workers’ rights", cityJobs: "City jobs", youthJobs: "Youth jobs", training: "Job training", support: "Support services", jobs: "Finding work" },
       results: "Here are a few places to start. You can open a listing or ask me about one by name or number.",
       youthJobResults: "Here are a few programs that help young people find work. Want to hear more about one?",
       adultJobResults: "Here are a few places that help adults find work. Want to hear more about one?",
@@ -85,7 +89,7 @@ function createResourceAssistant(directory) {
       input: "Tu mensaje", send: "Enviar", mic: "Hablar", stop: "Terminar de hablar", replay: "Repetir", replayLabel: "Repetir respuesta",
       voice: "Voz de las respuestas", voiceAuto: "Automática", voiceNone: "Sin voces locales",
       settings: "Ajustes del chat", aiLabel: "Usar IA para entender mis preguntas",
-      aiNotice: "La ayuda con IA envía tu mensaje actual o su transcripción a Cloudflare. Evita incluir datos personales.",
+      aiNotice: "Si la guía necesita ayuda para entender tu pregunta, envía tu mensaje actual o su transcripción a Cloudflare. Evita incluir datos personales.",
       aiThinking: "Buscando cómo ayudarte…", aiFallback: "La ayuda con IA no está disponible. La guía de recursos respondió en su lugar.",
       askFormat: "¿Te serviría una opción en línea o prefieres ir en persona?",
       scheduleNote: "Estas fichas mencionan el horario que buscas. Confírmalo con la organización.",
@@ -102,6 +106,9 @@ function createResourceAssistant(directory) {
       empty: "Por ahora no hay programas publicados. Vuelve a consultar más adelante.",
       unknown: "Cuéntame un poco sobre lo que necesitas. Por ejemplo, «me quedé sin trabajo» o «solo puedo tomar clases de inglés los fines de semana».",
       noMatch: "No encontré un programa que encaje en esta guía. ¿Quieres probar otra búsqueda?",
+      chooseGoal: topics => `Mencionaste ${topics}. ¿Por cuál quieres empezar?`,
+      housingResults: "Estas fichas mencionan ayuda con la vivienda. Pregunta a la organización qué ofrece y si puede ayudarte con la renta.",
+      goalNames: { english: "Clases de inglés", ged: "GED o secundaria", food: "Alimentos", housing: "Vivienda o renta", transport: "Transporte", health: "Atención médica", family: "Apoyo familiar o cuidado infantil", immigration: "Apoyo migratorio", worker: "Derechos laborales", cityJobs: "Empleos municipales", youthJobs: "Empleo juvenil", training: "Capacitación laboral", support: "Servicios de apoyo", jobs: "Buscar trabajo" },
       results: "Aquí tienes algunas opciones para empezar. Puedes abrir una ficha o preguntarme por el nombre o el número de un programa.",
       youthJobResults: "Estos programas ayudan a jóvenes a encontrar trabajo. ¿Quieres saber más sobre alguno?",
       adultJobResults: "Estos programas ayudan a personas adultas a encontrar trabajo. ¿Quieres saber más sobre alguno?",
@@ -137,7 +144,8 @@ function createResourceAssistant(directory) {
   const goals = [
     { id: "english", words: /\b(english|esl|esol|ingles)\b/, matches: r => r.englishLearning },
     { id: "ged", words: /\b(ged|hiset|diploma|finish high school|terminar la secundaria)\b/, matches: r => r.categories.includes("Education") && /\b(ged|hiset|equivalency)\b/i.test([r.summary, r.services, ...r.tags].join(" ")) },
-    { id: "food", words: /\b(food|pantry|groceries|comida|alimentos|despensa)\b/, topic: /\b(food|pantry|comida|alimentos|despensa)\b/ },
+    { id: "food", words: /\b(food|pantry|groceries|something to eat|comida|alimentos|despensa|algo para comer)\b/, topic: /\b(food|pantry|comida|alimentos|despensa)\b/ },
+    { id: "housing", words: /\b(housing|rent|eviction|vivienda|alquiler|renta|desalojo)\b/, topic: /\b(housing|rent assistance|rental assistance|vivienda|ayuda con (?:la renta|el alquiler))\b/ },
     { id: "transport", words: /\b(transportation|transit|bus|mobility|transporte|movilidad|autobus)\b/, topic: /\b(mobility|travel training|movilidad)\b/ },
     { id: "health", words: /\b(health|doctor|clinic|salud|medico|clinica)\b/, topic: /\b(primary care|health center|clinic|atencion primaria|clinica)\b/ },
     { id: "family", words: /\b(childcare|child care|family|familia|guarderia|cuidado infantil)\b/, topic: /\b(childcare|child care|family resource|cuidado infantil|recursos familiares)\b/ },
@@ -147,7 +155,7 @@ function createResourceAssistant(directory) {
     { id: "youthJobs", words: /\b(youth jobs?|teen jobs?|summer jobs?|empleo juvenil|trabajo de verano)\b/, category: "Youth Jobs" },
     { id: "training", words: /\b(training|skills|certificate|learn a trade|capacitacion|habilidades|certificado|aprender un oficio)\b/, category: "Training" },
     { id: "support", words: /\b(support services|servicios de apoyo)\b/, category: "Support Services" },
-    { id: "jobs", words: /\b(jobs?|work|employment|laid off|unemployed|resume|trabajo|empleo|trabajar|desemplead[oa]|despidieron|curriculum)\b/, category: "Job Search", askAudience: true }
+    { id: "jobs", words: /\b(jobs?|work|employment|laid off|let go|got fired|unemployed|resume|trabajo|empleo|trabajar|desemplead[oa]|despidieron|me corrieron|curriculum)\b/, category: "Job Search", askAudience: true }
   ];
 
   const normalize = value => value.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
@@ -156,7 +164,7 @@ function createResourceAssistant(directory) {
 
   function detectLanguage(message) {
     const value = normalize(message);
-    const spanish = value.match(/\b(hola|buenas|buenos dias|buenas tardes|buenas noches|necesito|quiero|puedo|donde|como|ayuda|busco|empleo|trabajo|trabajar|ingles|aprender|capacitacion|clases|joven|jovenes|comida|transporte|espanol|requisitos|adulto|adulta|cualquiera|gracias|oficio|horarios?|primer[oa]?|segund[oa]|sabados?)\b/g) ?? [];
+    const spanish = value.match(/\b(hola|buenas|buenos dias|buenas tardes|buenas noches|necesito|quiero|quisiera|me gustaria|puedo|pueden|podrian|esto|ayer|donde|como|ayuda|ayudar|busco|empleo|trabajo|trabajar|despidieron|me corrieron|ingles|aprender|capacitacion|clases|joven|jovenes|comida|alimentos|transporte|vivienda|alquiler|renta|desalojo|espanol|requisitos|adulto|adulta|cualquiera|gracias|oficio|horarios?|primer[oa]?|segund[oa]|sabados?)\b/g) ?? [];
     const english = value.match(/\b(hi|hello|hey|good morning|good afternoon|good evening|need|want|can|where|how|help|find|job|jobs|work|training|english|classes|learn|youth|food|transportation|eligibility|adult|either|thanks|thank you|hours|weekends)\b/g) ?? [];
     if (spanish.length !== english.length) return spanish.length > english.length ? "es" : "en";
     return lang;
@@ -359,14 +367,25 @@ function createResourceAssistant(directory) {
 
   function askAudience(clarify = false) {
     reply(text(clarify ? "ageClarify" : "age"));
+    addChoices(["adultChoice", "youthChoice", "eitherChoice"].map(key => ({ label: text(key) })));
+  }
+
+  function askGoal() {
+    const options = pendingGoals.goals.map(goal => ({ label: text("goalNames")[goal], goal }));
+    const topics = new Intl.ListFormat(lang).format(options.map(({ label }) => label.toLocaleLowerCase(lang)));
+    reply(text("chooseGoal")(topics));
+    addChoices(options);
+  }
+
+  function addChoices(options) {
     const choices = document.createElement("div");
     choices.className = "assistant-choices";
-    for (const key of ["adultChoice", "youthChoice", "eitherChoice"]) {
+    for (const { label, goal } of options) {
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = text(key);
+      button.textContent = label;
       button.addEventListener("click", () => {
-        if (!recognition) submit(button.textContent, voiceSession);
+        if (!recognition) submit(label, voiceSession, goal);
         input.focus();
       });
       choices.append(button);
@@ -408,7 +427,7 @@ function createResourceAssistant(directory) {
       if (category) return resource.categories.includes(category);
       if (goal.matches) return goal.matches(resource);
       const keywords = [resource.name, resource.summary, resource.services, ...resource.tags,
-        resource.translations?.es?.summary, resource.translations?.es?.services];
+        resource.translations?.es?.summary, resource.translations?.es?.services, resource.translations?.es?.tags];
       return goal.topic.test(normalize(keywords.join(" ")));
     });
     if (!candidates.length) {
@@ -421,7 +440,7 @@ function createResourceAssistant(directory) {
       ? candidates.filter(resource => scheduleWords.test(normalize(resource.hours + " " + (resource.translations?.es?.hours ?? ""))))
       : [];
     matches = (timed.length ? timed : candidates).slice(0, 3);
-    let intro = "results";
+    let intro = goal.id === "housing" ? "housingResults" : "results";
     if (scheduleWords) intro = timed.length ? "scheduleNote" : "scheduleUnknown";
     else if (goal.askAudience && audience) intro = audience === "youth" ? "youthJobResults" : "adultJobResults";
     reply(text(intro), matches);
@@ -444,6 +463,7 @@ function createResourceAssistant(directory) {
       if (intent.language !== lang) setLanguage(intent.language);
       searchContext = selectedProgram = null;
       pendingQuestion = "";
+      pendingGoals = null;
       matches = [];
       reply(text("guide"), [], { navigation: true });
       return true;
@@ -452,7 +472,8 @@ function createResourceAssistant(directory) {
     const hasPreference = intent.audience || intent.format || intent.schedule || intent.free || intent.transportBarrier;
     if (!goal && (intent.goal || !searchContext || !hasPreference)) return false;
 
-    const previous = !goal || searchContext?.goal === goal ? searchContext : null;
+    const choicePreferences = pendingGoals?.goals.includes(intent.goal) ? pendingGoals.intent : null;
+    const previous = choicePreferences ?? (!goal || searchContext?.goal === goal ? searchContext : null);
     const preferences = {
       goal: goal ?? previous.goal,
       audience: intent.audience || previous?.audience || "",
@@ -462,6 +483,7 @@ function createResourceAssistant(directory) {
       transportBarrier: Boolean(intent.transportBarrier || previous?.transportBarrier)
     };
     searchContext = preferences;
+    pendingGoals = null;
     selectedProgram = null;
     if (intent.language !== lang) setLanguage(intent.language);
     if (preferences.goal.askAudience && !preferences.audience) {
@@ -495,11 +517,21 @@ function createResourceAssistant(directory) {
     const schedule = /\b(weekends?|saturdays?|sundays?|fin(?:es)? de semana|sabados?|domingos?)\b/.test(query) ? "weekend"
       : /\b(evenings?|night(?:s)?|after work|after (5|five)|por la noche|de noche|por la tarde|despues del trabajo)\b/.test(query) ? "evening" : "";
     const free = /\b(free|no cost|can.t afford|gratis|gratuit[oa]s?|sin costo|no puedo pagar)\b/.test(query);
-    const transportBarrier = /\b(no car|(?:don.t|do not) have a car|no tengo (?:carro|coche|auto))\b/.test(query);
+    const transportBarrier = /\b(no car|(?:don.t|do not) have a car|no tengo (?:carro|coche|auto)|(?:have to|can only|need to) (?:take|ride) the bus|(?:tengo que|solo puedo) (?:tomar|usar) el (?:bus|autobus))\b/.test(query);
     // Work can describe when someone is free instead of what they are looking for.
     const search = query.replace(/\b(after work|i work (?:during the day|full time|daytime)|work for me|despues del trabajo|trabajo de dia)\b/g, "");
-    const goal = goals.find(entry => entry.words.test(search))?.id || "";
-    return { language: lang, goal, audience, format, schedule, free, transportBarrier };
+    const found = goals.filter(entry => entry.words.test(search)).map(entry => entry.id);
+    const foundGoals = found.filter(goal => {
+      if (goal === "transport" && transportBarrier && found.length > 1) return false;
+      if (goal === "jobs" && found.some(id => ["cityJobs", "youthJobs", "training"].includes(id))) {
+        // These phrases describe one goal. Keep job search as a separate goal if
+        // it is mentioned again outside the more specific phrase.
+        const general = search.replace(/\b((?:city|municipal|youth|teen|summer) jobs?|empleos municipales|empleo juvenil|trabajo de verano|job training|career training|capacitacion (?:para el trabajo|laboral))\b/g, "");
+        return goals.find(entry => entry.id === "jobs").words.test(general);
+      }
+      return true;
+    });
+    return { language: lang, goal: foundGoals[0] || "", goals: foundGoals, audience, format, schedule, free, transportBarrier };
   }
 
   function programNumber(query) {
@@ -519,7 +551,7 @@ function createResourceAssistant(directory) {
     mic.disabled = locked || Boolean(speechCheck);
   }
 
-  async function submit(value, fromVoice = false) {
+  async function submit(value, fromVoice = false, chosenGoal = "") {
     const content = value.trim().slice(0, 400);
     if (!content || aiRequest || recognition) return;
     voiceDraft = false;
@@ -555,6 +587,7 @@ function createResourceAssistant(directory) {
     if (selected) {
       selectedProgram = selected;
       pendingQuestion = "";
+      pendingGoals = null;
       if (asksHours) {
         const hasHours = selected.hours || (lang === "es" && selected.translations?.es?.hours);
         return reply(text(hasHours ? "programHours" : "hoursMissing"), [selected], { hoursOnly: true });
@@ -566,9 +599,26 @@ function createResourceAssistant(directory) {
     const localIntent = readLocalIntent(query);
     if (pendingQuestion === "askFormat" && /^(yes|yeah|sure|si|claro)$/.test(short)) localIntent.format = "online";
     if (pendingQuestion === "askFormat" && short === "no") localIntent.format = "inPerson";
-    // A follow-up that only changes preferences can be resolved without spending an AI request.
-    if (!localIntent.goal && applyIntent(localIntent, resources)) return;
+    if (!chosenGoal && localIntent.goals.length > 1) {
+      searchContext = selectedProgram = null;
+      pendingQuestion = "";
+      matches = [];
+      pendingGoals = { goals: localIntent.goals, intent: localIntent };
+      return askGoal();
+    }
+    if (chosenGoal) localIntent.goal = chosenGoal;
+    if (applyIntent(localIntent, resources)) return;
     if (pendingQuestion === "age" && !localIntent.goal && /^(ad(?:u(?:l)?)?|yo|you|jov)$/.test(short)) return askAudience(true);
+
+    const nameQuery = short.replace(/^(tell me about|what is|que es|hablame de)\s+/, "");
+    const possibleNames = nameQuery.length >= 5
+      ? resources.filter(resource => normalize(resource.name).includes(nameQuery)) : [];
+    if (possibleNames.length === 1) {
+      selectedProgram = possibleNames[0];
+      pendingQuestion = "";
+      pendingGoals = null;
+      return reply(text("programDetails"), possibleNames, { expanded: true });
+    }
 
     if (byId("Ai").checked && document.documentElement.dataset.dataSource === "google-sheet") {
       const controller = new AbortController();
@@ -590,16 +640,7 @@ function createResourceAssistant(directory) {
         lockAiRequest(false);
       }
     }
-    if (applyIntent(localIntent, resources)) return;
-
-    const nameQuery = short.replace(/^(tell me about|what is|que es|hablame de)\s+/, "");
-    const possibleNames = nameQuery.length >= 5
-      ? resources.filter(resource => normalize(resource.name).includes(nameQuery)) : [];
-    if (possibleNames.length === 1) {
-      selectedProgram = possibleNames[0];
-      pendingQuestion = "";
-      return reply(text("programDetails"), possibleNames, { expanded: true });
-    }
+    if (pendingGoals) return askGoal();
     if (pendingQuestion === "age") return askAudience(true);
     reply(text(pendingQuestion || (followUp ? "details" : "unknown")));
   }
