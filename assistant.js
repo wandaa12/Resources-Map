@@ -9,6 +9,7 @@ function createResourceAssistant(directory) {
   const status = byId("Status");
   const Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
   const speech = window.speechSynthesis;
+  const preferredVoices = {};
   let lang = directory.language();
   let preferredLanguage = null;
   let lastReply;
@@ -16,6 +17,9 @@ function createResourceAssistant(directory) {
   let selectedProgram;
   let recognition;
   let speechCheck;
+  let voiceDraft = false;
+  let speechPlayback;
+  let speechTimer;
   let voiceSession = false;
   let aiRequest;
   let searchContext;
@@ -25,7 +29,8 @@ function createResourceAssistant(directory) {
     en: {
       title: "Resource assistant", close: "Close resource assistant", language: "Chat and microphone",
       autoSpeak: "Read replies aloud", slow: "Speak slowly", conversation: "Conversation",
-      input: "Your message", send: "Send", mic: "Speak", stop: "Stop listening", replay: "Replay", replayLabel: "Replay reply",
+      input: "Your message", send: "Send", mic: "Speak", stop: "Done speaking", replay: "Replay", replayLabel: "Replay reply",
+      voice: "Reply voice", voiceAuto: "Automatic", voiceNone: "No local voices",
       settings: "Chat settings", aiLabel: "Use AI to understand my questions",
       aiNotice: "AI help sends your current message or voice transcript to Cloudflare. Please leave out personal information.",
       aiThinking: "Looking at what you’re asking…", aiFallback: "AI help is unavailable. The directory assistant answered instead.",
@@ -38,11 +43,15 @@ function createResourceAssistant(directory) {
       guide: "You can search the guide, browse programs on a list or map, or answer three questions in the program matcher. What would you like help finding?",
       matcher: "Open the program matcher", browse: "Browse the directory",
       age: "Is this for an adult or a young person? You can also say “either.”",
+      ageClarify: "I didn’t catch who it’s for. You can choose below.",
+      adultChoice: "Adult", youthChoice: "Young person", eitherChoice: "Either",
       loading: "The directory is still loading. Please try again in a moment.",
       empty: "There are no programs listed right now. Please check back later.",
       unknown: "Tell me a little about what you need. For example, “I lost my job” or “I can only take English classes on weekends.”",
       noMatch: "I couldn’t find a match in this guide. Would you like to try a different search?",
       results: "Here are a few places to start. You can open a listing or ask me about one by name or number.",
+      youthJobResults: "Here are a few programs that help young people find work. Want to hear more about one?",
+      adultJobResults: "Here are a few places that help adults find work. Want to hear more about one?",
       programDetails: "Here’s what the guide says about this program.",
       details: "What would you like to find out about a program? You can give me its name or number.",
       eligibility: "Who can use it", population: "Who it serves", services: "What it offers", contact: "Contact",
@@ -52,7 +61,9 @@ function createResourceAssistant(directory) {
       missing: "The guide doesn’t have all the details. Use the listing to see what’s available and confirm directly with the provider.",
       confirm: "Contact the provider to confirm current details before applying or visiting.",
       listing: "View listing", call: "Call", email: "Email", website: "Provider website", englishOnly: "From the directory (English)",
-      listening: "Listening…", checking: "Checking on-device speech…",
+      listening: "Listening… Say your question, then choose Done speaking.", checking: "Checking on-device speech…",
+      listeningShort: "Listening for a short phrase… You can add more before sending.",
+      reviewSpeech: "Check your message, then press Send. You can edit it or use Speak to add more.",
       micUnavailable: "Speak isn’t available for this language on this device. You can still use keyboard dictation.",
       pack: "Your browser needs a speech pack for this language.", install: "Install speech pack",
       installing: "Installing speech pack…", ready: "Speech pack ready. Press Speak to try it.",
@@ -71,7 +82,8 @@ function createResourceAssistant(directory) {
     es: {
       title: "Guía de recursos", close: "Cerrar la guía de recursos", language: "Chat y micrófono",
       autoSpeak: "Leer las respuestas en voz alta", slow: "Hablar más despacio", conversation: "Conversación",
-      input: "Tu mensaje", send: "Enviar", mic: "Hablar", stop: "Dejar de escuchar", replay: "Repetir", replayLabel: "Repetir respuesta",
+      input: "Tu mensaje", send: "Enviar", mic: "Hablar", stop: "Terminar de hablar", replay: "Repetir", replayLabel: "Repetir respuesta",
+      voice: "Voz de las respuestas", voiceAuto: "Automática", voiceNone: "Sin voces locales",
       settings: "Ajustes del chat", aiLabel: "Usar IA para entender mis preguntas",
       aiNotice: "La ayuda con IA envía tu mensaje actual o su transcripción a Cloudflare. Evita incluir datos personales.",
       aiThinking: "Buscando cómo ayudarte…", aiFallback: "La ayuda con IA no está disponible. La guía de recursos respondió en su lugar.",
@@ -84,11 +96,15 @@ function createResourceAssistant(directory) {
       guide: "Puedes buscar en la guía, ver los programas en una lista o en el mapa, o contestar tres preguntas en el buscador de programas. ¿Qué te gustaría encontrar?",
       matcher: "Abrir el buscador de programas", browse: "Ver el directorio",
       age: "¿Buscas para una persona adulta o joven? También puedes decir «cualquiera».",
+      ageClarify: "No entendí para quién buscas. Puedes elegir abajo.",
+      adultChoice: "Persona adulta", youthChoice: "Persona joven", eitherChoice: "Cualquiera",
       loading: "La guía todavía se está cargando. Inténtalo de nuevo en un momento.",
       empty: "Por ahora no hay programas publicados. Vuelve a consultar más adelante.",
       unknown: "Cuéntame un poco sobre lo que necesitas. Por ejemplo, «me quedé sin trabajo» o «solo puedo tomar clases de inglés los fines de semana».",
       noMatch: "No encontré un programa que encaje en esta guía. ¿Quieres probar otra búsqueda?",
       results: "Aquí tienes algunas opciones para empezar. Puedes abrir una ficha o preguntarme por el nombre o el número de un programa.",
+      youthJobResults: "Estos programas ayudan a jóvenes a encontrar trabajo. ¿Quieres saber más sobre alguno?",
+      adultJobResults: "Estos programas ayudan a personas adultas a encontrar trabajo. ¿Quieres saber más sobre alguno?",
       programDetails: "Esto es lo que dice la guía sobre este programa.",
       details: "¿Sobre qué programa quieres saber más? Puedes escribir o decir su nombre o número.",
       eligibility: "Requisitos", population: "A quién atiende", services: "Qué ofrece", contact: "Contacto",
@@ -98,7 +114,9 @@ function createResourceAssistant(directory) {
       missing: "La guía no tiene todos los detalles. Abre la ficha para ver la información disponible y confirma con la organización.",
       confirm: "Comunícate con la organización para confirmar los detalles antes de ir o inscribirte.",
       listing: "Ver ficha", call: "Llamar", email: "Correo electrónico", website: "Sitio de la organización", englishOnly: "De la guía (en inglés)",
-      listening: "Escuchando…", checking: "Comprobando el reconocimiento de voz…",
+      listening: "Escuchando… Di tu pregunta y pulsa Terminar de hablar.", checking: "Comprobando el reconocimiento de voz…",
+      listeningShort: "Escuchando una frase corta… Puedes agregar más antes de enviar.",
+      reviewSpeech: "Revisa tu mensaje y pulsa Enviar. Puedes editarlo o usar Hablar para agregar más.",
       micUnavailable: "La opción Hablar no está disponible para este idioma en tu dispositivo. Puedes usar el dictado del teclado.",
       pack: "Tu navegador necesita un paquete de voz para este idioma.", install: "Instalar paquete de voz",
       installing: "Instalando el paquete de voz…", ready: "El paquete está listo. Pulsa Hablar para probarlo.",
@@ -156,7 +174,7 @@ function createResourceAssistant(directory) {
     for (const [id, key] of Object.entries({
       Title: "title", LanguageLabel: "language", AutoSpeakLabel: "autoSpeak", SlowLabel: "slow",
       InputLabel: "input", Send: "send", Replay: "replay",
-      SettingsTitle: "settings", AiLabel: "aiLabel", AiNotice: "aiNotice",
+      SettingsTitle: "settings", VoiceLabel: "voice", AiLabel: "aiLabel", AiNotice: "aiNotice",
       DictationTitle: "dictationTitle", DictationStart: "dictationStart", DictationMac: "dictationMac",
       DictationWindows: "dictationWindows", DictationMobileLabel: "dictationMobileLabel",
       DictationMobile: "dictationMobile", DictationFinish: "dictationFinish"
@@ -164,6 +182,7 @@ function createResourceAssistant(directory) {
     mic.textContent = recognition ? text("stop") : text("mic");
     byId("Close").setAttribute("aria-label", text("close"));
     byId("Replay").setAttribute("aria-label", text("replayLabel"));
+    refreshVoiceOptions();
     log.setAttribute("aria-label", text("conversation"));
     const suggestions = ["job", "english", "help"].map(key => {
       const button = document.createElement("button");
@@ -252,32 +271,107 @@ function createResourceAssistant(directory) {
     return { card, spoken };
   }
 
+  function localVoices(locale) {
+    return (speech?.getVoices() ?? []).filter(voice =>
+      voice.localService && voice.lang.toLowerCase().split(/[-_]/)[0] === locale);
+  }
+
+  const voiceKey = voice => voice.voiceURI || voice.name || voice.lang;
+
+  function refreshVoiceOptions() {
+    const select = byId("Voice");
+    const voices = localVoices(lang);
+    const automatic = new Option(text(voices.length ? "voiceAuto" : "voiceNone"), "");
+    const options = voices.map(voice => new Option(voice.name || voice.lang, voiceKey(voice)));
+    select.replaceChildren(automatic, ...options);
+    select.disabled = !voices.length;
+    select.value = voices.some(voice => voiceKey(voice) === preferredVoices[lang]) ? preferredVoices[lang] : "";
+  }
+
+  function pickVoice(locale) {
+    const voices = localVoices(locale);
+    return voices.find(voice => voiceKey(voice) === preferredVoices[locale])
+      ?? voices.find(voice => /\b(enhanced|premium|natural|neural)\b/i.test(voice.name))
+      ?? voices.find(voice => voice.default)
+      ?? voices[0];
+  }
+
+  function stopSpeaking() {
+    speechPlayback = null;
+    speech?.cancel();
+  }
+
   function speak(parts) {
+    stopSpeaking();
     if (!speech || !window.SpeechSynthesisUtterance) {
       status.textContent = text("noVoice");
       return;
     }
-    speech.cancel();
-    const voices = speech.getVoices().filter(voice => voice.localService);
-    const rate = byId("Slow").checked ? 0.78 : 1;
+
+    // Keep adjacent text in the same voice together so it reads as a reply, with pauses.
+    const passages = [];
     let missingVoice = false;
-    for (const { value, lang } of parts) {
-      if (!value) continue;
-      const voice = voices.find(candidate => candidate.lang.toLowerCase().split(/[-_]/)[0] === lang);
+    for (const part of parts) {
+      if (!part.value?.trim()) continue;
+      const voice = pickVoice(part.lang);
       if (!voice) {
         missingVoice = true;
         continue;
       }
-      const line = new SpeechSynthesisUtterance(value);
-      line.voice = voice;
-      line.lang = voice.lang;
+      const value = part.value.trim();
+      const previous = passages.at(-1);
+      if (previous && voiceKey(previous.voice) === voiceKey(voice) &&
+          previous.value.length + value.length <= 320) {
+        previous.value += /[.!?:;]$/.test(previous.value) ? " " + value : ". " + value;
+      } else {
+        passages.push({ voice, value });
+      }
+    }
+    const playback = {};
+    speechPlayback = playback;
+    const rate = byId("Slow").checked ? 0.78 : 1;
+    function play(index) {
+      if (speechPlayback !== playback) return;
+      const next = passages[index];
+      if (!next) {
+        speechPlayback = null;
+        if (missingVoice) status.textContent = text("noVoice");
+        return;
+      }
+      const line = new SpeechSynthesisUtterance(next.value);
+      line.voice = next.voice;
+      line.lang = next.voice.lang;
       line.rate = rate;
+      line.onend = () => play(index + 1);
       line.onerror = event => {
-        if (!["interrupted", "canceled"].includes(event.error)) status.textContent = text("noVoice");
+        if (speechPlayback !== playback) return;
+        if (["interrupted", "canceled"].includes(event.error)) {
+          speechPlayback = null;
+        } else {
+          missingVoice = true;
+          play(index + 1);
+        }
       };
       speech.speak(line);
     }
-    if (missingVoice) status.textContent = text("noVoice");
+    play(0);
+  }
+
+  function askAudience(clarify = false) {
+    reply(text(clarify ? "ageClarify" : "age"));
+    const choices = document.createElement("div");
+    choices.className = "assistant-choices";
+    for (const key of ["adultChoice", "youthChoice", "eitherChoice"]) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = text(key);
+      button.addEventListener("click", () => {
+        if (!recognition) submit(button.textContent, voiceSession);
+        input.focus();
+      });
+      choices.append(button);
+    }
+    log.lastElementChild.append(choices);
   }
 
   function reply(content, resources = [], { expanded = false, hoursOnly = false, navigation = false, speakReply = true } = {}) {
@@ -327,7 +421,10 @@ function createResourceAssistant(directory) {
       ? candidates.filter(resource => scheduleWords.test(normalize(resource.hours + " " + (resource.translations?.es?.hours ?? ""))))
       : [];
     matches = (timed.length ? timed : candidates).slice(0, 3);
-    reply(text(scheduleWords ? timed.length ? "scheduleNote" : "scheduleUnknown" : "results"), matches);
+    let intro = "results";
+    if (scheduleWords) intro = timed.length ? "scheduleNote" : "scheduleUnknown";
+    else if (goal.askAudience && audience) intro = audience === "youth" ? "youthJobResults" : "adultJobResults";
+    reply(text(intro), matches);
   }
 
   async function classify(message, signal) {
@@ -370,7 +467,7 @@ function createResourceAssistant(directory) {
     if (preferences.goal.askAudience && !preferences.audience) {
       matches = [];
       pendingQuestion = "age";
-      reply(text("age"));
+      askAudience();
     } else if (preferences.transportBarrier && !preferences.format) {
       matches = [];
       pendingQuestion = "askFormat";
@@ -388,7 +485,8 @@ function createResourceAssistant(directory) {
 
   function readLocalIntent(query) {
     const either = /\b(either|both|cualquiera|ambos|me da igual)\b/.test(query);
-    const audience = /\b(youth|teens?|joven|jovenes|adolescente|my (son|daughter|kid)|mi hij[oa])\b/.test(query) ? "youth"
+    const youngAnswer = pendingQuestion === "age" && /^(?:young(?: person)?|a young person|younger)[.!?]?$/.test(query);
+    const audience = youngAnswer || /\b(youth|teens?|young(?:er)? person|joven|jovenes|adolescente|my (son|daughter|kid)|mi hij[oa])\b/.test(query) ? "youth"
       : /\b(adults?|adultos?|adultas?)\b/.test(query) ? "adult"
       : either && pendingQuestion === "age" ? "either" : "";
     const format = /\b(online|virtual|remote|from home|en linea|desde casa|a distancia)\b/.test(query) ? "online"
@@ -423,8 +521,9 @@ function createResourceAssistant(directory) {
 
   async function submit(value, fromVoice = false) {
     const content = value.trim().slice(0, 400);
-    if (!content || aiRequest) return;
-    if (recognition) finishListening(recognition, true);
+    if (!content || aiRequest || recognition) return;
+    voiceDraft = false;
+    log.querySelector(".assistant-choices")?.remove();
     clearSpeechCheck();
     byId("Settings").open = false;
     byId("Suggestions").hidden = true;
@@ -469,6 +568,7 @@ function createResourceAssistant(directory) {
     if (pendingQuestion === "askFormat" && short === "no") localIntent.format = "inPerson";
     // A follow-up that only changes preferences can be resolved without spending an AI request.
     if (!localIntent.goal && applyIntent(localIntent, resources)) return;
+    if (pendingQuestion === "age" && !localIntent.goal && /^(ad(?:u(?:l)?)?|yo|you|jov)$/.test(short)) return askAudience(true);
 
     if (byId("Ai").checked && document.documentElement.dataset.dataSource === "google-sheet") {
       const controller = new AbortController();
@@ -500,12 +600,16 @@ function createResourceAssistant(directory) {
       pendingQuestion = "";
       return reply(text("programDetails"), possibleNames, { expanded: true });
     }
+    if (pendingQuestion === "age") return askAudience(true);
     reply(text(pendingQuestion || (followUp ? "details" : "unknown")));
   }
 
   function finishListening(active, abort = false) {
     if (recognition !== active) return;
     recognition = null;
+    clearTimeout(speechTimer);
+    input.readOnly = false;
+    byId("Send").disabled = Boolean(aiRequest);
     if (abort) active.abort();
     mic.textContent = text("mic");
     mic.setAttribute("aria-pressed", "false");
@@ -601,31 +705,42 @@ function createResourceAssistant(directory) {
 
       active.lang = pack.options.langs[0];
       active.processLocally = true;
-      speech?.cancel();
+      active.continuous = pack.options.quality === "dictation";
+      active.interimResults = active.continuous;
+      stopSpeaking();
       hideDictation();
+      const originalDraft = input.value;
+      let heard = false;
+      const finishDraft = error => {
+        if (recognition !== active) return;
+        finishListening(active);
+        if (heard) {
+          status.textContent = text("reviewSpeech");
+        } else if (["not-allowed", "service-not-allowed"].includes(error)) {
+          showDictation("micBlocked");
+        } else {
+          showDictation("micError");
+        }
+      };
       active.onresult = event => {
         if (recognition !== active) return;
-        const transcript = event.results?.[0]?.[0]?.transcript?.trim();
-        finishListening(active);
-        if (transcript) submit(transcript, true);
-        else showDictation("micError");
+        const transcript = Array.from(event.results, result => result[0]?.transcript?.trim())
+          .filter(Boolean).join(" ");
+        if (!transcript) return;
+        input.value = [originalDraft.trimEnd(), transcript].filter(Boolean).join(" ").slice(0, input.maxLength);
+        heard = true;
+        voiceDraft = true;
       };
-      active.onerror = event => {
-        if (recognition !== active) return;
-        finishListening(active);
-        if (["not-allowed", "service-not-allowed"].includes(event.error)) showDictation("micBlocked");
-        else showDictation("micError");
-      };
-      active.onend = () => {
-        if (recognition !== active) return;
-        finishListening(active);
-        showDictation("micError");
-      };
+      active.onerror = event => finishDraft(event.error);
+      active.onend = () => finishDraft();
       recognition = active;
-      active.start();
+      input.readOnly = true;
+      byId("Send").disabled = true;
       mic.textContent = text("stop");
       mic.setAttribute("aria-pressed", "true");
-      status.textContent = text("listening");
+      status.textContent = text(active.continuous ? "listening" : "listeningShort");
+      active.start();
+      if (recognition === active) speechTimer = setTimeout(() => active.stop(), 25000);
     } catch {
       if (speechCheck !== check) return;
       if (recognition) finishListening(recognition);
@@ -650,7 +765,7 @@ function createResourceAssistant(directory) {
     clearSpeechCheck();
     hideDictation();
     if (recognition) finishListening(recognition, true);
-    speech?.cancel();
+    stopSpeaking();
     status.textContent = "";
     voiceSession = false;
   });
@@ -665,12 +780,13 @@ function createResourceAssistant(directory) {
     hideDictation();
     setLanguage(preferredLanguage);
     status.textContent = "";
-    speech?.cancel();
+    stopSpeaking();
   });
+  byId("Voice").addEventListener("change", event => { preferredVoices[lang] = event.target.value; });
+  speech?.addEventListener?.("voiceschanged", refreshVoiceOptions);
   byId("Form").addEventListener("submit", event => {
     event.preventDefault();
-    if (recognition) finishListening(recognition, true);
-    submit(input.value);
+    submit(input.value, voiceDraft);
   });
   input.addEventListener("keydown", event => {
     if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
