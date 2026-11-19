@@ -88,6 +88,7 @@ body:has(#nl-badge-frame) .assistant-launch {
 .assistant-options label, .assistant-ai label { display: flex; align-items: center; gap: .55rem; min-height: 44px; }
 .assistant-options input, .assistant-ai input { flex: none; width: 1.15rem; height: 1.15rem; margin: 0; accent-color: var(--blue-800); }
 .assistant-options .assistant-language { grid-column: 1 / -1; justify-content: space-between; }
+.assistant-language select { min-width: 0; max-width: 60%; }
 .assistant-ai { margin-top: .35rem; padding-top: .35rem; border-top: 1px solid var(--border); }
 .assistant-ai p { margin: 0 0 .25rem; color: var(--muted); }
 
@@ -130,6 +131,8 @@ body:has(#nl-badge-frame) .assistant-launch {
 .assistant-suggestions { flex: none; margin: .65rem 1.25rem .1rem; }
 .assistant-suggestions button { border-radius: 999px; font-size: .9rem; }
 .assistant-links { margin-top: .35rem; }
+.assistant-choices { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .65rem; }
+.assistant-choices button { border-color: var(--blue-200); }
 .assistant-links a { display: inline-flex; align-items: center; min-height: 44px; padding: .25rem .3rem; color: var(--blue-900); font-weight: 700; }
 
 .assistant-form {
