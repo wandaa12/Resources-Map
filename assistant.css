@@ -51,6 +51,10 @@ body:has(#nl-badge-frame) .assistant-launch {
 .assistant-options, .assistant-actions, .assistant-suggestions, .assistant-links { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
 .assistant-options { font-size: .875rem; }
 .assistant-options label { display: inline-flex; align-items: center; gap: .4rem; min-height: 32px; }
+.assistant-ai { font-size: .875rem; }
+.assistant-ai summary { min-height: 32px; padding-block: .3rem; color: var(--blue-900); cursor: pointer; }
+.assistant-ai p { margin: .25rem 0; }
+.assistant-ai label { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; }
 .assistant-messages { min-height: 7rem; max-height: 45dvh; overflow: auto; padding: .75rem; border-radius: .65rem; background: var(--blue-050); }
 .assistant-message { width: fit-content; max-width: 100%; margin: 0 0 .55rem; padding: .55rem .75rem; border-radius: .65rem; background: var(--white); overflow-wrap: anywhere; }
 .assistant-message:last-child { margin-bottom: 0; }

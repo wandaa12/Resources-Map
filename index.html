@@ -163,6 +163,11 @@
       <label><input id="assistantAutoSpeak" type="checkbox"> <span id="assistantAutoSpeakLabel">Read replies aloud</span></label>
       <label><input id="assistantSlow" type="checkbox"> <span id="assistantSlowLabel">Speak slowly</span></label>
     </div>
+    <details class="assistant-ai">
+      <summary id="assistantAiTitle">AI help (optional)</summary>
+      <p id="assistantAiNotice">AI help sends your current message or voice transcript to Cloudflare. Please leave out personal information.</p>
+      <label><input id="assistantAi" type="checkbox"> <span id="assistantAiLabel">Use AI to understand my questions</span></label>
+    </details>
     <div id="assistantMessages" class="assistant-messages" role="log" aria-label="Conversation" tabindex="0"></div>
     <div id="assistantSuggestions" class="assistant-suggestions"></div>
     <form id="assistantForm" class="assistant-form">
