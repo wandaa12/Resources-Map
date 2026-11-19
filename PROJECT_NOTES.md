@@ -106,7 +106,12 @@ The guide is a static site and does not require a build. To publish manually, us
 - `index.html`, `styles.css`, `app.js`, and `data.js`
 - `assistant.css` and `assistant.js`
 - `PROJECT_NOTES.md` and `_headers`
+- `_worker.js` and `_routes.json` for optional Workers AI
 
 `_headers` preserves the site's response headers, including permission for the assistant to use on-device speech. Use **Create a new deployment** and select **Production** when uploading a new version. Edits to the published Google Sheet still appear through the existing feed and do not require a new upload.
+
+To enable AI help, keep the account on the Workers Free plan. In the Pages project, select **Settings → Production → Bindings → Add → Workers AI**, name the binding `AI`, then upload the ZIP manually. In **Settings → Runtime**, use **Fail open** so the site remains available if the Functions request allowance is reached. See [binding setup](https://developers.cloudflare.com/pages/functions/bindings/#workers-ai) and [routing settings](https://developers.cloudflare.com/pages/functions/routing/#fail-open--closed).
+
+Only `/api/assistant` invokes the Worker. When a visitor enables AI help, Cloudflare classifies their current text or voice transcript. Program details and links still come from the current sheet. The assistant uses its local rules if consent is off, the sheet is unavailable, or the AI request fails or exceeds the free quota. The site does not save chats or send audio to the Worker.
 
 `netlify.toml` remains the configuration for the existing Netlify site. The two hosts have separate deploy settings. Once the new URL has been verified, the Netlify project owner can [stop Netlify builds](https://docs.netlify.com/build/configure-builds/stop-or-activate-builds/) to stop Git pushes from triggering future builds there.
