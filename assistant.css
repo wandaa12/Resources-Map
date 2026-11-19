@@ -22,63 +22,159 @@ body:has(#nl-badge-frame) .assistant-launch {
   inset: auto max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) auto;
   display: flex;
   flex-direction: column;
-  gap: .75rem;
-  width: min(29rem, calc(100% - 2rem));
-  max-height: min(43rem, calc(100dvh - 2rem));
+  width: min(32rem, calc(100% - 2rem));
+  height: min(45rem, calc(100dvh - 2rem));
+  max-width: none;
+  max-height: none;
   margin: 0;
-  padding: 1rem;
   overflow: auto;
   border: 1px solid var(--blue-200);
-  border-radius: 1rem;
-  font: 1rem/1.45 Arial, sans-serif;
+  border-radius: 1.125rem;
+  background: var(--white);
+  font: 1rem/1.5 Arial, sans-serif;
 }
-.assistant-dialog::backdrop { background: #06254330; backdrop-filter: none; }
-.assistant-header { display: flex; gap: .75rem; align-items: center; justify-content: space-between; }
-.assistant-header h2 { margin: 0; color: var(--blue-950); font: 700 1.5rem/1.2 Georgia, serif; }
+.assistant-dialog::backdrop { background: #06254340; backdrop-filter: none; }
+.assistant-header {
+  flex: none;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: .8rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--blue-050);
+}
+.assistant-header h2 { margin: 0; color: var(--blue-950); font: 700 clamp(1.25rem, 5vw, 1.55rem)/1.2 Georgia, serif; }
 .assistant-dialog button, .assistant-dialog select {
   min-height: 44px;
-  padding: .4rem .65rem;
-  border: 1px solid var(--blue-500);
-  border-radius: .5rem;
+  padding: .4rem .75rem;
+  border: 1px solid var(--border);
+  border-radius: .65rem;
   background: var(--white);
   color: var(--blue-950);
   font: inherit;
   cursor: pointer;
 }
-.assistant-dialog button:disabled { cursor: wait; }
-.assistant-dialog .assistant-close { min-width: 44px; font-size: 1.3rem; }
-.assistant-dialog :focus-visible, .assistant-launch:focus-visible { outline: 3px solid var(--blue-700); outline-offset: 3px; }
-.assistant-options, .assistant-actions, .assistant-suggestions, .assistant-links { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
-.assistant-options { font-size: .875rem; }
-.assistant-options label { display: inline-flex; align-items: center; gap: .4rem; min-height: 32px; }
-.assistant-ai { font-size: .875rem; }
-.assistant-ai summary { min-height: 32px; padding-block: .3rem; color: var(--blue-900); cursor: pointer; }
-.assistant-ai p { margin: .25rem 0; }
-.assistant-ai label { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; }
-.assistant-messages { min-height: 7rem; max-height: 45dvh; overflow: auto; padding: .75rem; border-radius: .65rem; background: var(--blue-050); }
-.assistant-message { width: fit-content; max-width: 100%; margin: 0 0 .55rem; padding: .55rem .75rem; border-radius: .65rem; background: var(--white); overflow-wrap: anywhere; }
+.assistant-dialog button:disabled { cursor: wait; opacity: .65; }
+.assistant-dialog button:not(:disabled):hover { border-color: var(--blue-500); }
+.assistant-dialog .assistant-close {
+  flex: 0 0 44px;
+  width: 44px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.assistant-dialog :focus-visible, .assistant-launch:focus-visible { outline: 3px solid var(--blue-700); outline-offset: -3px; }
+.assistant-settings { flex: none; margin-inline: 1.25rem; font-size: .9rem; }
+.assistant-settings summary {
+  min-height: 44px;
+  padding-block: .65rem;
+  color: var(--blue-900);
+  font-weight: 700;
+  cursor: pointer;
+}
+.assistant-settings-body {
+  max-height: min(13rem, 30dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  margin-bottom: .65rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  background: var(--blue-050);
+}
+.assistant-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem .75rem; }
+.assistant-options label, .assistant-ai label { display: flex; align-items: center; gap: .55rem; min-height: 44px; }
+.assistant-options input, .assistant-ai input { flex: none; width: 1.15rem; height: 1.15rem; margin: 0; accent-color: var(--blue-800); }
+.assistant-options .assistant-language { grid-column: 1 / -1; justify-content: space-between; }
+.assistant-ai { margin-top: .35rem; padding-top: .35rem; border-top: 1px solid var(--border); }
+.assistant-ai p { margin: 0 0 .25rem; color: var(--muted); }
+
+.assistant-messages {
+  flex: 1 1 0;
+  position: relative;
+  min-height: 5rem;
+  margin-inline: 1.25rem;
+  padding: .9rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border: 1px solid var(--blue-100);
+  border-radius: .85rem;
+  background: var(--blue-050);
+}
+.assistant-message {
+  width: fit-content;
+  max-width: 94%;
+  margin: 0 0 .85rem;
+  padding: .7rem .9rem;
+  border-radius: .8rem .8rem .8rem .25rem;
+  background: var(--white);
+  overflow-wrap: anywhere;
+}
 .assistant-message:last-child { margin-bottom: 0; }
 .assistant-message p { margin: 0; }
-.assistant-visitor { margin-inline-start: auto; background: var(--blue-900); color: var(--white); }
-.assistant-resource { margin-top: .65rem; padding-top: .65rem; border-top: 1px solid var(--blue-200); }
-.assistant-resource h3 { margin: 0 0 .25rem; font-size: 1rem; color: var(--blue-950); }
-.assistant-resource p + p { margin-top: .4rem; }
+.assistant-visitor {
+  max-width: 85%;
+  margin-inline-start: auto;
+  border-radius: .8rem .8rem .25rem .8rem;
+  background: var(--blue-900);
+  color: var(--white);
+}
+.assistant-resource { margin-top: .7rem; padding-top: .7rem; border-top: 1px solid var(--blue-200); }
+.assistant-resource h3 { margin: 0 0 .3rem; font-size: 1rem; color: var(--blue-950); }
+.assistant-resource p + p { margin-top: .45rem; }
+.assistant-suggestions, .assistant-links { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem .6rem; }
+.assistant-suggestions[hidden] { display: none; }
+.assistant-suggestions { flex: none; margin: .65rem 1.25rem .1rem; }
+.assistant-suggestions button { border-radius: 999px; font-size: .9rem; }
 .assistant-links { margin-top: .35rem; }
-.assistant-links a { display: inline-flex; align-items: center; min-height: 44px; padding: .25rem .35rem; color: var(--blue-900); font-weight: 700; }
-.assistant-form { display: grid; gap: .35rem; }
-.assistant-form label { font-weight: 700; }
-.assistant-form textarea { width: 100%; min-height: 48px; resize: vertical; padding: .5rem; font: inherit; color: var(--ink); border: 1px solid var(--blue-500); border-radius: .5rem; }
+.assistant-links a { display: inline-flex; align-items: center; min-height: 44px; padding: .25rem .3rem; color: var(--blue-900); font-weight: 700; }
+
+.assistant-form {
+  flex: none;
+  display: grid;
+  gap: .45rem;
+  margin-top: .7rem;
+  padding: .75rem 1.25rem max(.9rem, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+.assistant-form label { font-size: .9rem; font-weight: 700; }
+.assistant-form textarea {
+  width: 100%;
+  min-height: 48px;
+  max-height: 20dvh;
+  resize: vertical;
+  padding: .6rem .75rem;
+  font: inherit;
+  color: var(--ink);
+  border: 1px solid var(--blue-500);
+  border-radius: .65rem;
+}
+.assistant-actions { display: flex; align-items: stretch; flex-wrap: wrap; gap: .55rem; }
 .assistant-actions button { font-weight: 700; }
 .assistant-actions button:first-child, .assistant-actions [aria-pressed="true"] { background: var(--blue-900); color: var(--white); }
 .assistant-status { margin: 0; color: var(--blue-950); font-size: .875rem; }
 .assistant-status:empty { display: none; }
+
 @media (max-width: 540px) {
   .assistant-dialog[open] {
-    inset-inline: .5rem;
-    inset-block-end: max(.5rem, env(safe-area-inset-bottom));
-    width: auto;
-    max-height: calc(100dvh - 1rem);
+    inset: auto 0 0;
+    width: 100%;
+    height: calc(100dvh - max(.5rem, env(safe-area-inset-top)));
+    border-radius: 1rem 1rem 0 0;
   }
-  .assistant-suggestions { gap: .3rem; }
-  .assistant-suggestions button { font-size: .875rem; }
+  .assistant-header, .assistant-form { padding-inline: .85rem; }
+  .assistant-settings, .assistant-messages, .assistant-suggestions { margin-inline: .85rem; }
+  .assistant-messages { padding: .7rem; }
+  .assistant-message { max-width: 100%; }
+  .assistant-visitor { max-width: 85%; }
+  .assistant-actions > button { flex: 1 1 auto; }
+}
+@media (max-height: 500px) {
+  .assistant-header { padding-block: .3rem; }
+  .assistant-form { padding-block-start: .45rem; }
+  .assistant-form textarea { height: 48px; }
 }
