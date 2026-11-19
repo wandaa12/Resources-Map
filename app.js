@@ -386,9 +386,24 @@
     if (sharedResource) openDetails(sharedResource, false);
   }
 
+  const assistant = createResourceAssistant({
+    language: () => state.lang,
+    resources: () => loadingResources ? null : RESOURCES,
+    openProgram(resource, language) {
+      if (language !== state.lang) {
+        state.lang = language;
+        applyLanguage();
+        render();
+      }
+      openDetails(resource);
+    },
+    openMatcher() { $("#matcherLaunch").click(); }
+  });
+
   applyLanguage();
   syncControls();
   render();
+  $("#languageToggle").addEventListener("click", assistant.syncLanguage);
   loadResourcesFromSheet().then(sheetResources => {
     loadingResources = false;
     RESOURCES = sheetResources ?? BACKUP_RESOURCES;
