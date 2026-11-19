@@ -112,6 +112,8 @@ The guide is a static site and does not require a build. To publish manually, us
 
 To enable AI help, keep the account on the Workers Free plan. In the Pages project, select **Settings → Production → Bindings → Add → Workers AI**, name the binding `AI`, then upload the ZIP manually. In **Settings → Runtime**, use **Fail open** so the site remains available if the Functions request allowance is reached. See [binding setup](https://developers.cloudflare.com/pages/functions/bindings/#workers-ai) and [routing settings](https://developers.cloudflare.com/pages/functions/routing/#fail-open--closed).
 
+Create the `everett-assistant` AI Gateway on the same account before publishing. Use standard Workers AI billing on Workers Free, set a shared limit of 20 requests per hour, and leave prompt logging, response caching, and retries off. The Worker routes every model call through that gateway and falls back locally if it rejects a request. See [AI Gateway rate limiting](https://developers.cloudflare.com/ai-gateway/features/rate-limiting/).
+
 Only `/api/assistant` invokes the Worker. When a visitor enables AI help, Cloudflare classifies their current text or voice transcript. Program details and links still come from the current sheet. The assistant uses its local rules if consent is off, the sheet is unavailable, or the AI request fails or exceeds the free quota. The site does not save chats or send audio to the Worker.
 
 `netlify.toml` remains the configuration for the existing Netlify site. The two hosts have separate deploy settings. Once the new URL has been verified, the Netlify project owner can [stop Netlify builds](https://docs.netlify.com/build/configure-builds/stop-or-activate-builds/) to stop Git pushes from triggering future builds there.
