@@ -156,17 +156,21 @@
       <h2 id="assistantTitle">Resource assistant</h2>
       <button id="assistantClose" class="assistant-close" type="button" aria-label="Close resource assistant" autofocus>×</button>
     </header>
-    <div class="assistant-options">
-      <label><span id="assistantLanguageLabel">Chat and microphone</span>
-        <select id="assistantLanguage"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select>
-      </label>
-      <label><input id="assistantAutoSpeak" type="checkbox"> <span id="assistantAutoSpeakLabel">Read replies aloud</span></label>
-      <label><input id="assistantSlow" type="checkbox"> <span id="assistantSlowLabel">Speak slowly</span></label>
-    </div>
-    <details class="assistant-ai">
-      <summary id="assistantAiTitle">AI help (optional)</summary>
-      <p id="assistantAiNotice">AI help sends your current message or voice transcript to Cloudflare. Please leave out personal information.</p>
-      <label><input id="assistantAi" type="checkbox"> <span id="assistantAiLabel">Use AI to understand my questions</span></label>
+    <details id="assistantSettings" class="assistant-settings">
+      <summary id="assistantSettingsTitle">Chat settings</summary>
+      <div class="assistant-settings-body">
+        <div class="assistant-options">
+          <label class="assistant-language"><span id="assistantLanguageLabel">Chat and microphone</span>
+            <select id="assistantLanguage"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select>
+          </label>
+          <label><input id="assistantAutoSpeak" type="checkbox"> <span id="assistantAutoSpeakLabel">Read replies aloud</span></label>
+          <label><input id="assistantSlow" type="checkbox"> <span id="assistantSlowLabel">Speak slowly</span></label>
+        </div>
+        <div class="assistant-ai">
+          <label><input id="assistantAi" type="checkbox" aria-describedby="assistantAiNotice"> <span id="assistantAiLabel">Use AI to understand my questions</span></label>
+          <p id="assistantAiNotice">AI help sends your current message or voice transcript to Cloudflare. Please leave out personal information.</p>
+        </div>
+      </div>
     </details>
     <div id="assistantMessages" class="assistant-messages" role="log" aria-label="Conversation" tabindex="0"></div>
     <div id="assistantSuggestions" class="assistant-suggestions"></div>
@@ -176,10 +180,10 @@
       <div class="assistant-actions">
         <button id="assistantSend" type="submit">Send</button>
         <button id="assistantMic" type="button" aria-pressed="false">Microphone</button>
-        <button id="assistantReplay" type="button">Replay reply</button>
+        <button id="assistantReplay" type="button" aria-label="Replay reply">Replay</button>
       </div>
+      <p id="assistantStatus" class="assistant-status" role="status"></p>
     </form>
-    <p id="assistantStatus" class="assistant-status" role="status"></p>
   </dialog>
 
   <template id="resourceCardTemplate">

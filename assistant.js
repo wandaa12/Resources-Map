@@ -24,8 +24,8 @@ function createResourceAssistant(directory) {
     en: {
       title: "Resource assistant", close: "Close resource assistant", language: "Chat and microphone",
       autoSpeak: "Read replies aloud", slow: "Speak slowly", conversation: "Conversation",
-      input: "Your message", send: "Send", mic: "🎙 Speak", stop: "Stop listening", replay: "🔊 Replay reply",
-      aiTitle: "AI help (optional)", aiLabel: "Use AI to understand my questions",
+      input: "Your message", send: "Send", mic: "Speak", stop: "Stop listening", replay: "Replay", replayLabel: "Replay reply",
+      settings: "Chat settings", aiLabel: "Use AI to understand my questions",
       aiNotice: "AI help sends your current message or voice transcript to Cloudflare. Please leave out personal information.",
       aiThinking: "Looking at what you’re asking…", aiFallback: "AI help is unavailable. The directory assistant answered instead.",
       askFormat: "Would an online option work for you, or would you rather go in person?",
@@ -46,6 +46,8 @@ function createResourceAssistant(directory) {
       details: "What would you like to find out about a program? You can give me its name or number.",
       eligibility: "Who can use it", population: "Who it serves", services: "What it offers", contact: "Contact",
       hours: "Hours and schedule", address: "Location", referrals: "Next steps",
+      programHours: "Here are the hours listed in the guide.",
+      hoursMissing: "The guide doesn’t list hours for this program. Contact the provider to check.",
       missing: "The guide doesn’t have all the details. Use the listing to see what’s available and confirm directly with the provider.",
       confirm: "Contact the provider to confirm current details before applying or visiting.",
       listing: "View listing", call: "Call", email: "Email", website: "Provider website", englishOnly: "From the directory (English)",
@@ -59,8 +61,8 @@ function createResourceAssistant(directory) {
     es: {
       title: "Guía de recursos", close: "Cerrar la guía de recursos", language: "Chat y micrófono",
       autoSpeak: "Leer las respuestas en voz alta", slow: "Hablar más despacio", conversation: "Conversación",
-      input: "Tu mensaje", send: "Enviar", mic: "🎙 Hablar", stop: "Dejar de escuchar", replay: "🔊 Repetir respuesta",
-      aiTitle: "Ayuda con IA (opcional)", aiLabel: "Usar IA para entender mis preguntas",
+      input: "Tu mensaje", send: "Enviar", mic: "Hablar", stop: "Dejar de escuchar", replay: "Repetir", replayLabel: "Repetir respuesta",
+      settings: "Ajustes del chat", aiLabel: "Usar IA para entender mis preguntas",
       aiNotice: "La ayuda con IA envía tu mensaje actual o su transcripción a Cloudflare. Evita incluir datos personales.",
       aiThinking: "Buscando cómo ayudarte…", aiFallback: "La ayuda con IA no está disponible. La guía de recursos respondió en su lugar.",
       askFormat: "¿Te serviría una opción en línea o prefieres ir en persona?",
@@ -81,6 +83,8 @@ function createResourceAssistant(directory) {
       details: "¿Sobre qué programa quieres saber más? Puedes escribir o decir su nombre o número.",
       eligibility: "Requisitos", population: "A quién atiende", services: "Qué ofrece", contact: "Contacto",
       hours: "Horarios", address: "Ubicación", referrals: "Próximos pasos",
+      programHours: "Estos son los horarios que figuran en la guía.",
+      hoursMissing: "La guía no indica el horario de este programa. Consulta con la organización.",
       missing: "La guía no tiene todos los detalles. Abre la ficha para ver la información disponible y confirma con la organización.",
       confirm: "Comunícate con la organización para confirmar los detalles antes de ir o inscribirte.",
       listing: "Ver ficha", call: "Llamar", email: "Correo electrónico", website: "Sitio de la organización", englishOnly: "De la guía (en inglés)",
@@ -130,10 +134,11 @@ function createResourceAssistant(directory) {
     for (const [id, key] of Object.entries({
       Title: "title", LanguageLabel: "language", AutoSpeakLabel: "autoSpeak", SlowLabel: "slow",
       InputLabel: "input", Send: "send", Replay: "replay",
-      AiTitle: "aiTitle", AiLabel: "aiLabel", AiNotice: "aiNotice"
+      SettingsTitle: "settings", AiLabel: "aiLabel", AiNotice: "aiNotice"
     })) byId(id).textContent = text(key);
     mic.textContent = recognition ? text("stop") : text("mic");
     byId("Close").setAttribute("aria-label", text("close"));
+    byId("Replay").setAttribute("aria-label", text("replayLabel"));
     log.setAttribute("aria-label", text("conversation"));
     const suggestions = ["job", "english", "help"].map(key => {
       const button = document.createElement("button");
@@ -182,7 +187,7 @@ function createResourceAssistant(directory) {
     parent.append(line);
   }
 
-  function resourceCard(resource, index, expanded) {
+  function resourceCard(resource, index, { expanded, hoursOnly }) {
     const locale = lang;
     const card = document.createElement("section");
     card.className = "assistant-resource";
@@ -190,8 +195,9 @@ function createResourceAssistant(directory) {
     title.textContent = index ? `${index}. ${resource.name}` : resource.name;
     card.append(title);
     const spoken = [{ value: title.textContent, lang }];
-    for (const [field, label] of [["summary", ""], ...["hours", "address", "services", "eligibility", "population", "referrals"].map(field => [field, text(field)])]) {
-      if (!expanded && field !== "summary") continue;
+    const fields = hoursOnly ? ["hours"] : expanded ? ["summary", "hours", "address", "services", "eligibility", "population", "referrals"] : ["summary"];
+    for (const field of fields) {
+      const label = field === "summary" ? "" : text(field);
       const translation = lang === "es" && resource.translations?.es?.[field];
       const value = translation || resource[field];
       if (!value) continue;
@@ -215,8 +221,8 @@ function createResourceAssistant(directory) {
       actions.append(link(`${text("call")} ${resource.phone}`, "tel:" + resource.phone.replace(/[^\d+]/g, "")));
       spoken.push({ value: `${text("call")} ${resource.phone}`, lang });
     }
-    if (resource.website) actions.append(link(text("website"), resource.website));
-    if (resource.email) actions.append(link(text("email"), "mailto:" + encodeURIComponent(resource.email)));
+    if (!hoursOnly && resource.website) actions.append(link(text("website"), resource.website));
+    if (!hoursOnly && resource.email) actions.append(link(text("email"), "mailto:" + encodeURIComponent(resource.email)));
     card.append(actions);
     return { card, spoken };
   }
@@ -249,11 +255,11 @@ function createResourceAssistant(directory) {
     if (missingVoice) status.textContent = text("noVoice");
   }
 
-  function reply(content, resources = [], { expanded = false, navigation = false, speakReply = true } = {}) {
+  function reply(content, resources = [], { expanded = false, hoursOnly = false, navigation = false, speakReply = true } = {}) {
     const item = message(content, "reply");
     lastReply = [{ value: content, lang }];
     resources.forEach((resource, index) => {
-      const { card, spoken } = resourceCard(resource, expanded ? 0 : index + 1, expanded);
+      const { card, spoken } = resourceCard(resource, expanded || hoursOnly ? 0 : index + 1, { expanded, hoursOnly });
       item.append(card);
       lastReply.push(...spoken);
     });
@@ -270,7 +276,7 @@ function createResourceAssistant(directory) {
         link(text("matcher"), "#directory", directory.openMatcher));
       item.append(actions);
     }
-    log.scrollTop = log.scrollHeight;
+    log.scrollTop = Math.max(0, item.offsetTop - 12);
     if (dialog.open && speakReply && (voiceSession || byId("AutoSpeak").checked)) speak(lastReply);
   }
 
@@ -378,7 +384,7 @@ function createResourceAssistant(directory) {
       ?? query.match(/\b(?:program|programa|option|opcion|number|numero)\s+([1-3])\b/);
     if (number) return Number(number[1]);
     const ordinal = query.match(/\b(first|second|third)\s+(?:one|program|option)\b/)
-      ?? query.match(/\b(?:el|la)\s+(primer[oa]?|segund[oa]|tercer[oa]?)(?:\s+(?:programa|opcion)\b|[.!?]?\s*$)/);
+      ?? query.match(/\b(?:el|la|del)\s+(primer[oa]?|segund[oa]|tercer[oa]?)(?:\s+(?:programa|opcion)\b|[.!?]?\s*$)/);
     if (!ordinal) return 0;
     if (/^(first|primer)/.test(ordinal[1])) return 1;
     return /^(second|segund)/.test(ordinal[1]) ? 2 : 3;
@@ -394,6 +400,8 @@ function createResourceAssistant(directory) {
     const content = value.trim().slice(0, 400);
     if (!content || aiRequest) return;
     if (recognition) finishListening(recognition, true);
+    byId("Settings").open = false;
+    byId("Suggestions").hidden = true;
     input.value = "";
     status.textContent = "";
     voiceSession = fromVoice;
@@ -416,11 +424,16 @@ function createResourceAssistant(directory) {
     if (!resources.length) return reply(text("empty"));
     const number = programNumber(query);
     const named = resources.find(resource => query.includes(normalize(resource.name)));
-    const followUp = /\b(eligibility|eligible|requirements|contact|phone|call|tell me more|hours|when does|where is it|how (do|can) i (apply|sign up)|requisitos|contacto|telefono|llamar|mas informacion|horarios?|donde queda|como me inscribo)\b/.test(query);
+    const asksHours = /\b(hours|when does|horarios?|a que hora)\b/.test(query);
+    const followUp = asksHours || /\b(eligibility|eligible|requirements|contact|phone|call|tell me more|where is it|how (do|can) i (apply|sign up)|requisitos|contacto|telefono|llamar|mas informacion|donde queda|como me inscribo)\b/.test(query);
     const selected = named ?? (number ? matches[number - 1] : followUp ? selectedProgram ?? (matches.length === 1 ? matches[0] : null) : null);
     if (selected) {
       selectedProgram = selected;
       pendingQuestion = "";
+      if (asksHours) {
+        const hasHours = selected.hours || (lang === "es" && selected.translations?.es?.hours);
+        return reply(text(hasHours ? "programHours" : "hoursMissing"), [selected], { hoursOnly: true });
+      }
       return reply(text("programDetails"), [selected], { expanded: true });
     }
     if (number || (followUp && matches.length > 1)) return reply(text("details"));
