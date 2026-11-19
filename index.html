@@ -8,6 +8,7 @@
   <title>Everett Workforce Guide</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="assistant.css">
 </head>
 <body>
   <!-- Accessibility: keyboard users can skip repeated navigation. -->
@@ -149,6 +150,33 @@
     </form>
   </dialog>
 
+  <button id="assistantLaunch" class="assistant-launch" type="button" aria-haspopup="dialog" aria-controls="assistantDialog">Resource assistant</button>
+  <dialog id="assistantDialog" class="assistant-dialog" aria-labelledby="assistantTitle">
+    <header class="assistant-header">
+      <h2 id="assistantTitle">Resource assistant</h2>
+      <button id="assistantClose" class="assistant-close" type="button" aria-label="Close resource assistant" autofocus>×</button>
+    </header>
+    <div class="assistant-options">
+      <label><span id="assistantLanguageLabel">Chat and microphone</span>
+        <select id="assistantLanguage"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select>
+      </label>
+      <label><input id="assistantAutoSpeak" type="checkbox"> <span id="assistantAutoSpeakLabel">Read replies aloud</span></label>
+      <label><input id="assistantSlow" type="checkbox"> <span id="assistantSlowLabel">Speak slowly</span></label>
+    </div>
+    <div id="assistantMessages" class="assistant-messages" role="log" aria-label="Conversation" tabindex="0"></div>
+    <div id="assistantSuggestions" class="assistant-suggestions"></div>
+    <form id="assistantForm" class="assistant-form">
+      <label for="assistantInput" id="assistantInputLabel">Ask the resource assistant</label>
+      <textarea id="assistantInput" rows="2" maxlength="400"></textarea>
+      <div class="assistant-actions">
+        <button id="assistantSend" type="submit">Send</button>
+        <button id="assistantMic" type="button" aria-pressed="false">Microphone</button>
+        <button id="assistantReplay" type="button">Replay reply</button>
+      </div>
+    </form>
+    <p id="assistantStatus" class="assistant-status" role="status"></p>
+  </dialog>
+
   <template id="resourceCardTemplate">
     <article class="resource-card reveal">
       <div class="card-top"><span class="category-badge"></span><button class="save-button" type="button" aria-label="Save program"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/></svg></button></div>
@@ -162,6 +190,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="data.js"></script>
+  <script src="assistant.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
