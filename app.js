@@ -7,6 +7,7 @@
 (() => {
   const TEXT = {
     en: {
+      loadingPrograms: "Loading programs…", emptyDirectory: "No programs are currently listed.",
       skip: "Skip to resource directory", brandSubtitle: "Workforce Guide", navFind: "Find programs", navHow: "How it works", saved: "Saved",
       heroEyebrow: "Everett workforce directory", heroTitle: "Find workforce support in Everett.", heroCopy: "Explore job-search help, career training, English and GED programs, youth employment and worker advocacy in one clear guide.",
       searchLabel: "Search by service, organization, or need", searchPlaceholder: "Try “English classes” or “job training”", searchButton: "Search", popular: "Popular:", catJob: "Job search", catTraining: "Training", catEducation: "Education", catYouth: "Youth jobs",
@@ -23,6 +24,7 @@
       footerTitle: "Everett Workforce Guide", footerBuilt: "A student-built workforce directory.", footerNote: "Information was compiled from project documents and provider websites. Program hours, eligibility and enrollment can change, so contact the provider before applying or visiting.", projectNotes: "Project notes", email: "Email"
     },
     es: {
+      loadingPrograms: "Cargando programas…", emptyDirectory: "Actualmente no hay programas publicados.",
       skip: "Ir al directorio de recursos", brandSubtitle: "Guía de Empleo", navFind: "Buscar programas", navHow: "Cómo funciona", saved: "Guardados",
       heroEyebrow: "Directorio laboral de Everett", heroTitle: "Encuentre apoyo laboral en Everett.", heroCopy: "Encuentre opciones de apoyo para buscar empleo, capacitación profesional, clases de inglés y preparación para el GED, empleo juvenil y defensa de los derechos laborales, todo en una guía clara.",
       searchLabel: "Buscar por servicio, organización o necesidad", searchPlaceholder: "Pruebe “clases de inglés” o “capacitación laboral”", searchButton: "Buscar", popular: "Popular:", catJob: "Búsqueda de empleo", catTraining: "Capacitación", catEducation: "Educación", catYouth: "Empleo juvenil",
@@ -68,13 +70,46 @@
   const listViewButton = $("#listViewButton");
   const mapViewButton = $("#mapViewButton");
 
+  const savedProgramsKey = "everett-resource-saves";
+  const languageKey = "everett-language";
+
+  function readPreference(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  function writePreference(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // Preferences still work for the current visit when storage is blocked.
+    }
+  }
+
+  function readSavedPrograms() {
+    try {
+      const saved = JSON.parse(readPreference(savedProgramsKey));
+      if (Array.isArray(saved)) {
+        return new Set(saved.filter(id => typeof id === "string" && id.trim()));
+      }
+    } catch {
+      // A malformed entry should never prevent the directory from loading.
+    }
+    return new Set();
+  }
+
   const state = {
     query: "", categories: new Set(["All"]), audience: "all", format: "all", freeOnly: false,
     englishClassesOnly: false, savedOnly: false, view: "list",
-    lang: localStorage.getItem("everett-language") === "es" ? "es" : "en",
-    saved: new Set(JSON.parse(localStorage.getItem("everett-resource-saves") || "[]"))
+    lang: readPreference(languageKey) === "es" ? "es" : "en",
+    saved: readSavedPrograms()
   };
 
+  let RESOURCES = [];
+  let loadingResources = true;
   let resourceMap;
   let markerLayer;
   let currentResource;
@@ -83,7 +118,7 @@
   const localize = (resource, field) => state.lang === "es" && resource.translations?.es?.[field] ? resource.translations.es[field] : resource[field];
   const categoryLabel = category => CATEGORY_LABELS[state.lang][category] || category;
   const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character]));
-  const directionsUrl = resource => resource.coordinates ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(resource.address)}` : "";
+  const directionsUrl = resource => resource.coordinates ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(resource.address || resource.coordinates.join(","))}` : "";
   const reviewDate = resource => new Intl.DateTimeFormat(state.lang === "es" ? "es-US" : "en-US", { year: "numeric", month: "long", day: "numeric" }).format(new Date(`${resource.verified}T12:00:00`));
 
   // Search indexes English and Spanish so switching languages preserves results.
@@ -121,7 +156,9 @@
     card.querySelector(".card-summary").textContent = localize(resource, "summary");
     card.querySelector(".meta-location").textContent = localize(resource, "address");
     card.querySelector(".meta-hours").textContent = localize(resource, "hours");
-    card.querySelector(".card-verified").textContent = `${t("reviewed")} ${reviewDate(resource)}`;
+    const reviewed = card.querySelector(".card-verified");
+    if (resource.verified) reviewed.textContent = `${t("reviewed")} ${reviewDate(resource)}`;
+    else reviewed.hidden = true;
     const tagContainer = card.querySelector(".card-tags");
     localize(resource, "tags").slice(0, 3).forEach(tag => { const item = document.createElement("span"); item.textContent = tag; tagContainer.append(item); });
 
@@ -133,7 +170,8 @@
 
     const callButton = card.querySelector(".call-button");
     if (resource.phone) { callButton.textContent = t("call"); callButton.href = `tel:${resource.phone.replace(/[^\d+]/g, "")}`; }
-    else { callButton.textContent = t("website"); callButton.href = resource.website; callButton.target = "_blank"; callButton.rel = "noopener"; }
+    else if (resource.website) { callButton.textContent = t("website"); callButton.href = resource.website; callButton.target = "_blank"; callButton.rel = "noopener"; }
+    else callButton.hidden = true;
     const directionsButton = card.querySelector(".directions-button");
     const route = directionsUrl(resource);
     if (route) { directionsButton.href = route; directionsButton.textContent = t("directions"); }
@@ -150,7 +188,7 @@
 
   function toggleSaved(resource, button) {
     state.saved.has(resource.id) ? state.saved.delete(resource.id) : state.saved.add(resource.id);
-    localStorage.setItem("everett-resource-saves", JSON.stringify([...state.saved]));
+    writePreference(savedProgramsKey, JSON.stringify([...state.saved]));
     updateSaveButton(button, resource);
     savedCount.textContent = state.saved.size;
     if (state.savedOnly) render();
@@ -173,7 +211,7 @@
       <div class="dialog-hero"><span class="category-badge">${escapeHtml(categoryLabel(resource.category))}</span><h2 id="dialogTitle">${escapeHtml(resource.name)}</h2><p>${escapeHtml(localize(resource, "summary"))}</p></div>
       <div class="dialog-body"><div class="detail-contact">${contactLinks}<button type="button" id="shareProgram">${escapeHtml(t("share"))}</button><button type="button" id="printProgram">${escapeHtml(t("print"))}</button></div><p class="share-status" id="shareStatus" aria-live="polite"></p>
         <div class="detail-grid">${detailBlock(t("location"), localize(resource, "address"))}${detailBlock(t("hours"), localize(resource, "hours"))}${detailBlock(t("services"), localize(resource, "services"))}${detailBlock(t("eligibility"), localize(resource, "eligibility"))}${detailBlock(t("serves"), localize(resource, "population"))}${detailBlock(t("accessibility"), localize(resource, "accessibility"))}${detailBlock(t("languages"), localize(resource, "languages"))}${detailBlock(t("referrals"), localize(resource, "referrals"))}${detailBlock(t("contact"), localize(resource, "contact"))}</div>
-        <p class="review-date">${escapeHtml(t("reviewed"))}: <strong>${escapeHtml(reviewDate(resource))}</strong></p><p class="source-note"><strong>${escapeHtml(t("confirmTitle"))}</strong> ${escapeHtml(t("confirmCopy"))}</p></div>`;
+        ${resource.verified ? `<p class="review-date">${escapeHtml(t("reviewed"))}: <strong>${escapeHtml(reviewDate(resource))}</strong></p>` : ""}<p class="source-note"><strong>${escapeHtml(t("confirmTitle"))}</strong> ${escapeHtml(t("confirmCopy"))}</p></div>`;
     $("#shareProgram").addEventListener("click", () => shareProgram(resource));
     $("#printProgram").addEventListener("click", () => window.print());
     if (updateHash) history.replaceState(null, "", `${location.pathname}${location.search}#program=${resource.id}`);
@@ -240,19 +278,23 @@
 
   function render() {
     const resources = visibleResources();
-    programStat.textContent = RESOURCES.length;
+    programStat.textContent = loadingResources ? "—" : RESOURCES.length;
     categoryStat.textContent = CATEGORIES.length - 1;
     grid.replaceChildren(...resources.map(createCard));
     renderCategoryFilters();
     savedCount.textContent = state.saved.size;
-    emptyState.hidden = resources.length !== 0;
+    const directoryEmpty = !loadingResources && RESOURCES.length === 0;
+    emptyState.hidden = loadingResources || resources.length !== 0;
+    $("#emptyDirectory").hidden = !directoryEmpty;
+    $("#emptyFilters").hidden = directoryEmpty;
     grid.hidden = state.view !== "list";
-    mapView.hidden = state.view !== "map";
+    mapView.hidden = loadingResources || directoryEmpty || state.view !== "map";
     listViewButton.setAttribute("aria-pressed", String(state.view === "list"));
     mapViewButton.setAttribute("aria-pressed", String(state.view === "map"));
-    if (state.view === "map") renderMap(resources);
+    if (!mapView.hidden) renderMap(resources);
     const savedWord = state.savedOnly ? (state.lang === "es" ? " guardados" : " saved") : "";
     resultSummary.textContent = state.lang === "es" ? `Mostrando ${resources.length} programa${resources.length === 1 ? "" : "s"}${savedWord}` : `Showing ${resources.length}${savedWord} program${resources.length === 1 ? "" : "s"}`;
+    if (loadingResources) resultSummary.textContent = t("loadingPrograms");
     observeReveals();
   }
 
@@ -283,7 +325,7 @@
     $("#resourceMap").setAttribute("aria-label", state.lang === "es" ? "Mapa interactivo de programas laborales filtrados" : "Interactive map of filtered workforce programs");
     $("#dialogClose").setAttribute("aria-label", state.lang === "es" ? "Cerrar detalles" : "Close details");
     $("#matcherClose").setAttribute("aria-label", state.lang === "es" ? "Cerrar recomendador de programas" : "Close program matcher");
-    localStorage.setItem("everett-language", state.lang);
+    writePreference(languageKey, state.lang);
   }
 
   $("#heroSearch").addEventListener("submit", event => { event.preventDefault(); state.query = searchInput.value.trim(); state.savedOnly = false; render(); $("#directory").scrollIntoView({ behavior: "smooth" }); });
@@ -341,21 +383,14 @@
     if (sharedResource) openDetails(sharedResource, false);
   }
 
-  // Render the local backup immediately, then replace it with approved sheet
-  // rows when the shared editor is available.
   applyLanguage();
   syncControls();
   render();
-  openSharedProgram();
   loadResourcesFromSheet().then(sheetResources => {
-    if (!sheetResources) return;
-    RESOURCES = sheetResources;
-    document.documentElement.dataset.dataSource = "google-sheet";
+    loadingResources = false;
+    RESOURCES = sheetResources ?? BACKUP_RESOURCES;
+    document.documentElement.dataset.dataSource = sheetResources === null ? "backup" : "google-sheet";
     render();
-    if (currentResource) {
-      const updatedResource = RESOURCES.find(resource => resource.id === currentResource.id);
-      if (updatedResource) openDetails(updatedResource, false);
-      else closeDetails();
-    } else openSharedProgram();
+    openSharedProgram();
   });
 })();
