@@ -15,6 +15,7 @@ function createResourceAssistant(directory) {
   let matches = [];
   let selectedProgram;
   let recognition;
+  let speechCheck;
   let voiceSession = false;
   let aiRequest;
   let searchContext;
@@ -52,10 +53,19 @@ function createResourceAssistant(directory) {
       confirm: "Contact the provider to confirm current details before applying or visiting.",
       listing: "View listing", call: "Call", email: "Email", website: "Provider website", englishOnly: "From the directory (English)",
       listening: "Listening…", checking: "Checking on-device speech…",
-      micUnavailable: "On-device speech input in this language isn’t available here. You can type your message.",
+      micUnavailable: "Speak isn’t available for this language on this device. You can still use keyboard dictation.",
       pack: "Your browser needs a speech pack for this language.", install: "Install speech pack",
       installing: "Installing speech pack…", ready: "Speech pack ready. Press Speak to try it.",
-      micError: "I couldn’t hear that. Check microphone access, try speaking again, or type your message.",
+      packDownloading: "The speech pack is still downloading. Try Speak again in a moment.",
+      micBlocked: "Microphone access was blocked. Allow it in your browser, or try keyboard dictation.",
+      micError: "I couldn’t hear that. Try a short question, or use keyboard dictation.",
+      dictationTitle: "How to use keyboard dictation",
+      dictationStart: "Click or tap the message box first.",
+      dictationMac: "Use the Dictation shortcut in System Settings → Keyboard, or choose Edit → Start Dictation.",
+      dictationWindows: "Press the Windows key + H.",
+      dictationMobileLabel: "Phone or tablet",
+      dictationMobile: "Tap the microphone on your on-screen keyboard.",
+      dictationFinish: "Choose English or Spanish on your device, check the text, then press Send. Your device’s speech settings apply.",
       noVoice: "A local voice for this language isn’t available on this device. You can read the reply above."
     },
     es: {
@@ -89,10 +99,19 @@ function createResourceAssistant(directory) {
       confirm: "Comunícate con la organización para confirmar los detalles antes de ir o inscribirte.",
       listing: "Ver ficha", call: "Llamar", email: "Correo electrónico", website: "Sitio de la organización", englishOnly: "De la guía (en inglés)",
       listening: "Escuchando…", checking: "Comprobando el reconocimiento de voz…",
-      micUnavailable: "El reconocimiento de voz en este idioma no está disponible en este dispositivo. Puedes escribir tu mensaje.",
+      micUnavailable: "La opción Hablar no está disponible para este idioma en tu dispositivo. Puedes usar el dictado del teclado.",
       pack: "Tu navegador necesita un paquete de voz para este idioma.", install: "Instalar paquete de voz",
       installing: "Instalando el paquete de voz…", ready: "El paquete está listo. Pulsa Hablar para probarlo.",
-      micError: "No pude escucharte. Revisa el permiso del micrófono, vuelve a hablar o escribe tu mensaje.",
+      packDownloading: "El paquete de voz todavía se está descargando. Vuelve a pulsar Hablar en un momento.",
+      micBlocked: "El navegador bloqueó el micrófono. Permite el acceso o usa el dictado del teclado.",
+      micError: "No pude escucharte. Prueba con una pregunta corta o usa el dictado del teclado.",
+      dictationTitle: "Cómo usar el dictado del teclado",
+      dictationStart: "Primero, haz clic o toca el cuadro del mensaje.",
+      dictationMac: "Usa el atajo de Dictado en Configuración del Sistema → Teclado, o elige Edición → Iniciar dictado.",
+      dictationWindows: "Presiona la tecla Windows + H.",
+      dictationMobileLabel: "Teléfono o tableta",
+      dictationMobile: "Toca el micrófono del teclado en pantalla.",
+      dictationFinish: "Elige inglés o español en tu dispositivo, revisa el texto y pulsa Enviar. Se aplica la configuración de voz de tu dispositivo.",
       noVoice: "Este dispositivo no tiene una voz local para este idioma. Puedes leer la respuesta arriba."
     }
   };
@@ -115,7 +134,7 @@ function createResourceAssistant(directory) {
 
   const normalize = value => value.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
   const text = key => copy[lang][key];
-  const speechLang = () => lang === "es" ? "es-US" : "en-US";
+  const speechLocales = { en: ["en-US", "en-CA", "en-GB", "en-AU"], es: ["es-US", "es-MX", "es-ES", "es-419"] };
 
   function detectLanguage(message) {
     const value = normalize(message);
@@ -126,7 +145,10 @@ function createResourceAssistant(directory) {
   }
 
   function setLanguage(next) {
-    if (next !== lang && recognition) finishListening(recognition, true);
+    if (next !== lang) {
+      if (recognition) finishListening(recognition, true);
+      clearSpeechCheck();
+    }
     lang = next;
     dialog.lang = lang;
     language.value = lang;
@@ -134,7 +156,10 @@ function createResourceAssistant(directory) {
     for (const [id, key] of Object.entries({
       Title: "title", LanguageLabel: "language", AutoSpeakLabel: "autoSpeak", SlowLabel: "slow",
       InputLabel: "input", Send: "send", Replay: "replay",
-      SettingsTitle: "settings", AiLabel: "aiLabel", AiNotice: "aiNotice"
+      SettingsTitle: "settings", AiLabel: "aiLabel", AiNotice: "aiNotice",
+      DictationTitle: "dictationTitle", DictationStart: "dictationStart", DictationMac: "dictationMac",
+      DictationWindows: "dictationWindows", DictationMobileLabel: "dictationMobileLabel",
+      DictationMobile: "dictationMobile", DictationFinish: "dictationFinish"
     })) byId(id).textContent = text(key);
     mic.textContent = recognition ? text("stop") : text("mic");
     byId("Close").setAttribute("aria-label", text("close"));
@@ -393,13 +418,14 @@ function createResourceAssistant(directory) {
   function lockAiRequest(locked) {
     byId("Send").disabled = locked;
     language.disabled = locked;
-    mic.disabled = locked;
+    mic.disabled = locked || Boolean(speechCheck);
   }
 
   async function submit(value, fromVoice = false) {
     const content = value.trim().slice(0, 400);
     if (!content || aiRequest) return;
     if (recognition) finishListening(recognition, true);
+    clearSpeechCheck();
     byId("Settings").open = false;
     byId("Suggestions").hidden = true;
     input.value = "";
@@ -485,63 +511,115 @@ function createResourceAssistant(directory) {
     mic.setAttribute("aria-pressed", "false");
   }
 
+  function showDictation(key) {
+    status.textContent = text(key);
+    byId("Dictation").hidden = false;
+  }
+
+  function hideDictation() {
+    byId("Dictation").hidden = true;
+    byId("Dictation").open = false;
+  }
+
+  function startSpeechCheck() {
+    speechCheck = {};
+    mic.disabled = true;
+    return speechCheck;
+  }
+
+  function clearSpeechCheck() {
+    speechCheck = null;
+    mic.disabled = Boolean(aiRequest);
+  }
+
+  async function findSpeechPack(locale) {
+    const preferred = (navigator.languages ?? []).filter(tag => tag.toLowerCase().startsWith(locale + "-")).slice(0, 3);
+    const candidates = [...new Set([...preferred, ...speechLocales[locale]])];
+    const checked = [];
+    for (const quality of ["dictation", "command"]) {
+      const packs = await Promise.all(candidates.map(async tag => {
+        const options = { langs: [tag], processLocally: true, quality };
+        try {
+          return { options, state: await Recognition.available(options) };
+        } catch {
+          return { options, state: "unavailable" };
+        }
+      }));
+      const available = packs.find(pack => pack.state === "available");
+      if (available) return available;
+      checked.push(...packs);
+    }
+    return checked.find(pack => pack.state === "downloading")
+      ?? checked.find(pack => pack.state === "downloadable");
+  }
+
+  function offerSpeechPack(options) {
+    showDictation("pack");
+    const install = document.createElement("button");
+    install.type = "button";
+    install.textContent = text("install");
+    install.addEventListener("click", async () => {
+      const check = startSpeechCheck();
+      status.textContent = text("installing");
+      try {
+        const installed = await Recognition.install(options);
+        if (speechCheck !== check) return;
+        if (installed) status.textContent = text("ready");
+        else showDictation("micUnavailable");
+      } catch {
+        if (speechCheck === check) showDictation("micUnavailable");
+      } finally {
+        if (speechCheck === check) clearSpeechCheck();
+      }
+    });
+    status.append(" ", install);
+  }
+
   async function listen() {
     if (recognition) {
       recognition.stop();
       return;
     }
+    if (speechCheck || aiRequest) return;
     if (!Recognition?.available) {
-      status.textContent = text("micUnavailable");
-      return;
-    }
-    const active = new Recognition();
-    if (!("processLocally" in active)) {
-      status.textContent = text("micUnavailable");
+      showDictation("micUnavailable");
       return;
     }
 
-    const options = { langs: [speechLang()], processLocally: true, quality: "dictation" };
+    const check = startSpeechCheck();
     status.textContent = text("checking");
-    mic.disabled = true;
     try {
-      const availability = await Recognition.available(options);
-      if (!dialog.open || aiRequest || options.langs[0] !== speechLang()) return;
-      if (availability !== "available") {
-        status.textContent = text("micUnavailable");
-        if (availability === "downloadable" && Recognition.install) {
-          status.textContent = text("pack") + " ";
-          const install = document.createElement("button");
-          install.type = "button";
-          install.textContent = text("install");
-          install.addEventListener("click", async () => {
-            status.textContent = text("installing");
-            try {
-              status.textContent = text(await Recognition.install(options) ? "ready" : "micUnavailable");
-            } catch {
-              status.textContent = text("micUnavailable");
-            }
-          });
-          status.append(install);
-        }
+      const active = new Recognition();
+      if (!("processLocally" in active)) return showDictation("micUnavailable");
+      const pack = await findSpeechPack(lang);
+      if (speechCheck !== check || !dialog.open || aiRequest) return;
+      if (pack?.state !== "available") {
+        if (pack?.state === "downloadable" && Recognition.install) offerSpeechPack(pack.options);
+        else showDictation(pack?.state === "downloading" ? "packDownloading" : "micUnavailable");
         return;
       }
-      speech?.cancel();
-      active.lang = options.langs[0];
+
+      active.lang = pack.options.langs[0];
       active.processLocally = true;
+      speech?.cancel();
+      hideDictation();
       active.onresult = event => {
         if (recognition !== active) return;
+        const transcript = event.results?.[0]?.[0]?.transcript?.trim();
         finishListening(active);
-        submit(event.results[0][0].transcript, true);
+        if (transcript) submit(transcript, true);
+        else showDictation("micError");
       };
-      active.onerror = () => {
+      active.onerror = event => {
         if (recognition !== active) return;
         finishListening(active);
-        status.textContent = text("micError");
+        if (["not-allowed", "service-not-allowed"].includes(event.error)) showDictation("micBlocked");
+        else showDictation("micError");
       };
       active.onend = () => {
         if (recognition !== active) return;
         finishListening(active);
-        status.textContent = text("micError");
+        showDictation("micError");
       };
       recognition = active;
       active.start();
@@ -549,10 +627,11 @@ function createResourceAssistant(directory) {
       mic.setAttribute("aria-pressed", "true");
       status.textContent = text("listening");
     } catch {
-      if (recognition === active) finishListening(active);
-      status.textContent = text("micUnavailable");
+      if (speechCheck !== check) return;
+      if (recognition) finishListening(recognition);
+      showDictation("micUnavailable");
     } finally {
-      mic.disabled = Boolean(aiRequest);
+      if (speechCheck === check) clearSpeechCheck();
     }
   }
 
@@ -568,6 +647,8 @@ function createResourceAssistant(directory) {
   byId("Close").addEventListener("click", close);
   dialog.addEventListener("close", () => {
     aiRequest?.abort();
+    clearSpeechCheck();
+    hideDictation();
     if (recognition) finishListening(recognition, true);
     speech?.cancel();
     status.textContent = "";
@@ -581,6 +662,7 @@ function createResourceAssistant(directory) {
   });
   language.addEventListener("change", () => {
     preferredLanguage = language.value;
+    hideDictation();
     setLanguage(preferredLanguage);
     status.textContent = "";
     speech?.cancel();
@@ -597,6 +679,7 @@ function createResourceAssistant(directory) {
     }
   });
   byId("Replay").addEventListener("click", () => {
+    clearSpeechCheck();
     if (recognition) finishListening(recognition, true);
     status.textContent = "";
     if (lastReply) speak(lastReply);

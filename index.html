@@ -183,6 +183,18 @@
         <button id="assistantReplay" type="button" aria-label="Replay reply">Replay</button>
       </div>
       <p id="assistantStatus" class="assistant-status" role="status"></p>
+      <details id="assistantDictation" class="assistant-dictation" hidden>
+        <summary id="assistantDictationTitle">How to use keyboard dictation</summary>
+        <div class="assistant-dictation-steps">
+          <p id="assistantDictationStart">Click or tap the message box first.</p>
+          <ul>
+            <li><strong>Mac</strong> <span id="assistantDictationMac">Use the Dictation shortcut in System Settings → Keyboard, or choose Edit → Start Dictation.</span></li>
+            <li><strong>Windows</strong> <span id="assistantDictationWindows">Press the Windows key + H.</span></li>
+            <li><strong id="assistantDictationMobileLabel">Phone or tablet</strong> <span id="assistantDictationMobile">Tap the microphone on your on-screen keyboard.</span></li>
+          </ul>
+          <p id="assistantDictationFinish">Choose English or Spanish on your device, check the text, then press Send. Your device’s speech settings apply.</p>
+        </div>
+      </details>
     </form>
   </dialog>
 
