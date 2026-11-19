@@ -101,4 +101,12 @@ The published Programs tab is public read-only data because browsers must be abl
 
 ## Deployment
 
-This is a build-free static site. Netlify publishes the repository root, as configured in `netlify.toml`. Any commit to the connected production branch should trigger a new deployment.
+The guide is a static site and does not require a build. To publish manually, use [Cloudflare Pages Direct Upload](https://developers.cloudflare.com/pages/get-started/direct-upload/) and choose **Drag and drop your files**. Upload a ZIP with these files at its root:
+
+- `index.html`, `styles.css`, `app.js`, and `data.js`
+- `assistant.css` and `assistant.js`
+- `PROJECT_NOTES.md` and `_headers`
+
+`_headers` preserves the site's response headers, including permission for the assistant to use on-device speech. Use **Create a new deployment** and select **Production** when uploading a new version. Edits to the published Google Sheet still appear through the existing feed and do not require a new upload.
+
+`netlify.toml` remains the configuration for the existing Netlify site. The two hosts have separate deploy settings. Once the new URL has been verified, the Netlify project owner can [stop Netlify builds](https://docs.netlify.com/build/configure-builds/stop-or-activate-builds/) to stop Git pushes from triggering future builds there.
