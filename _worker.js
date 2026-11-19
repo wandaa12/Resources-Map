@@ -1,4 +1,5 @@
-const model = "@cf/meta/llama-3.1-8b-instruct";
+const model = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+const gateway = { id: "everett-assistant" };
 const schema = {
   type: "object",
   properties: {
@@ -79,9 +80,9 @@ export default {
           { role: "user", content: JSON.stringify(input) }
         ],
         response_format: { type: "json_schema", json_schema: schema },
-        max_tokens: 180,
+        max_tokens: 96,
         temperature: 0
-      });
+      }, { gateway });
       const intent = validateIntent(typeof result.response === "string" ? JSON.parse(result.response) : result.response);
       if (!intent) return json({ error: "Unusable classification" }, 502);
       return json(intent);
