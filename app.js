@@ -121,19 +121,69 @@
   const directionsUrl = resource => resource.coordinates ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(resource.address || resource.coordinates.join(","))}` : "";
   const reviewDate = resource => new Intl.DateTimeFormat(state.lang === "es" ? "es-US" : "en-US", { year: "numeric", month: "long", day: "numeric" }).format(new Date(`${resource.verified}T12:00:00`));
 
-  // Search indexes English and Spanish so switching languages preserves results.
-  const searchableText = resource => [resource.name, resource.address, resource.summary, resource.services, resource.eligibility, resource.population, resource.hours, resource.languages, resource.tags, ...Object.values(resource.translations?.es || {})].flat().join(" ").toLowerCase();
+  const searchWords = value => String(value ?? "").toLowerCase().normalize("NFD")
+    .replace(/\p{M}/gu, "").match(/[\p{L}\p{N}]+/gu) ?? [];
+  const searchStopWords = new Set(["a", "an", "and", "for", "in", "of", "the", "to", "de", "del", "el", "en", "la", "las", "los", "para", "un", "una", "y"]);
+  const searchAliases = [
+    ["job", "jobs", "work", "employment", "career", "careers", "empleo", "empleos", "trabajo", "trabajos", "laboral"],
+    ["training", "capacitacion", "formacion", "entrenamiento"],
+    ["english", "ingles", "esl", "esol", "ell"],
+    ["class", "classes", "course", "courses", "clase", "clases", "curso", "cursos"],
+    ["food", "groceries", "comida", "alimentos"],
+    ["housing", "rent", "vivienda", "alquiler", "renta"],
+    ["free", "gratis", "gratuito", "gratuita"]
+  ];
+  const searchIndex = new WeakMap();
 
-  const visibleResources = () => RESOURCES.filter(resource => {
-    const matchesQuery = !state.query || searchableText(resource).includes(state.query.toLowerCase());
-    const matchesCategory = state.categories.has("All") || resource.categories.some(category => state.categories.has(category));
-    const matchesAudience = state.audience === "all" || resource.audiences.includes(state.audience);
-    const matchesFormat = state.format === "all" || resource.formats.includes(state.format);
-    const matchesFree = !state.freeOnly || resource.free;
-    const matchesEnglish = !state.englishClassesOnly || resource.englishLearning;
-    const matchesSaved = !state.savedOnly || state.saved.has(resource.id);
-    return matchesQuery && matchesCategory && matchesAudience && matchesFormat && matchesFree && matchesEnglish && matchesSaved;
-  });
+  function indexResource(resource) {
+    if (searchIndex.has(resource)) return searchIndex.get(resource);
+    const title = searchWords(resource.name).join(" ");
+    const categories = resource.categories.flatMap(category => [category, CATEGORY_LABELS.es[category]]);
+    const highlights = [resource.name, ...categories, ...resource.tags, ...(resource.translations?.es?.tags ?? [])];
+    const description = [resource.address, resource.summary, resource.services, resource.eligibility,
+      resource.population, resource.hours, resource.languages, ...Object.values(resource.translations?.es ?? {})];
+    const index = {
+      title,
+      phrases: [...highlights, ...description].flat().map(value => searchWords(value).join(" ")),
+      primary: new Set(highlights.flatMap(searchWords)),
+      full: new Set([...highlights, ...description].flat().flatMap(searchWords))
+    };
+    searchIndex.set(resource, index);
+    return index;
+  }
+
+  function searchScore(resource, phrase, terms) {
+    const index = indexResource(resource);
+    let score = index.title === phrase ? 24 : 0;
+    if (index.phrases.some(field => ` ${field} `.includes(` ${phrase} `))) score += 8;
+    for (const { word, aliases } of terms) {
+      if (index.primary.has(word)) score += 4;
+      else if (index.full.has(word)) score += 3;
+      else if (aliases.some(alias => index.full.has(alias))) score += 1;
+      else return 0;
+    }
+    return score;
+  }
+
+  function visibleResources() {
+    const filtered = RESOURCES.filter(resource => {
+      const matchesCategory = state.categories.has("All") || resource.categories.some(category => state.categories.has(category));
+      const matchesAudience = state.audience === "all" || resource.audiences.includes(state.audience);
+      const matchesFormat = state.format === "all" || resource.formats.includes(state.format);
+      const matchesFree = !state.freeOnly || resource.free;
+      const matchesEnglish = !state.englishClassesOnly || resource.englishLearning;
+      const matchesSaved = !state.savedOnly || state.saved.has(resource.id);
+      return matchesCategory && matchesAudience && matchesFormat && matchesFree && matchesEnglish && matchesSaved;
+    });
+    const words = searchWords(state.query);
+    if (!words.length) return state.query ? [] : filtered;
+    const keywords = words.filter(word => !searchStopWords.has(word));
+    const terms = [...new Set(keywords.length ? keywords : words)].map(word => ({
+      word, aliases: searchAliases.find(group => group.includes(word)) ?? []
+    }));
+    return filtered.map(resource => ({ resource, score: searchScore(resource, words.join(" "), terms) }))
+      .filter(match => match.score > 0).sort((a, b) => b.score - a.score).map(match => match.resource);
+  }
 
   function renderCategoryFilters() {
     categoryFilters.replaceChildren(...CATEGORIES.map(category => {

@@ -4,7 +4,7 @@ const schema = {
   type: "object",
   properties: {
     language: { type: "string", enum: ["en", "es"] },
-    goal: { type: "string", enum: ["", "english", "ged", "food", "transport", "health", "family", "immigration", "worker", "cityJobs", "youthJobs", "training", "support", "jobs", "guide"] },
+    goal: { type: "string", enum: ["", "english", "ged", "food", "housing", "transport", "health", "family", "immigration", "worker", "cityJobs", "youthJobs", "training", "support", "jobs", "guide"] },
     audience: { type: "string", enum: ["", "adult", "youth", "either"] },
     format: { type: "string", enum: ["", "online", "inPerson", "either"] },
     schedule: { type: "string", enum: ["", "evening", "weekend", "either"] },
@@ -17,7 +17,7 @@ const schema = {
 
 const instructions = `Classify one message for a bilingual Everett community directory. Return only the requested JSON.
 Choose the visitor's language, English (en) or Spanish (es). For short or mixed-language text use the hint if unclear.
-Extract the main goal. Use transport only if transportation help is itself the primary goal. Use transportBarrier if getting there is a problem for their main goal, for example "I don't have a car".
+Extract the main goal. Use housing for rent, eviction, or housing help. Use transport only if transportation help is itself the primary goal. Use transportBarrier if getting there is a problem for their main goal, for example "I don't have a car".
 Use evening or weekend for times they need (e.g. "I work all day" implies evening), and use either for an explicit no-preference answer.
 Only mark free, audience, and format when the visitor expresses that preference. Do not infer age, finances, or immigration status from their identity.
 For a short follow-up that only answers a preference, leave goal empty. Use an empty string for unspecified preferences or an unclear or unsupported goal.
