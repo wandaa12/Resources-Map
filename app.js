@@ -365,7 +365,10 @@
     state.categories = new Set(goals);
     state.audience = audiences.length > 1 ? "all" : audiences[0];
     state.format = formats.length > 1 ? "all" : formats[0];
-    state.query = ""; state.savedOnly = false;
+    state.query = "";
+    state.savedOnly = false;
+    state.freeOnly = false;
+    state.englishClassesOnly = false;
     syncControls(); matcherDialog.close(); render(); $("#directory").scrollIntoView({ behavior: "smooth" });
   });
 
